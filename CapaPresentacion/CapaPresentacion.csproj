@@ -372,10 +372,21 @@
     <Content Include="assets\sweetalert\sweetalert.js" />
     <Content Include="assets\toastr\toastr.min.css" />
     <Content Include="assets\toastr\toastr.min.js" />
+    <Content Include="FrmActivo.aspx" />
+    <Content Include="Imagenes\itsass.jpg" />
+    <Content Include="Imagenes\sinimagen.png" />
     <Content Include="Inicio.aspx" />
+    <Content Include="js\FrmActivo.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmActivo.aspx.cs">
+      <DependentUpon>FrmActivo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FrmActivo.aspx.designer.cs">
+      <DependentUpon>FrmActivo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Inicio.aspx.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -498,6 +509,16 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CapaEntidad\CapaEntidad.csproj">
+      <Project>{57dd5b05-3240-4313-bb3b-c2a87268e92a}</Project>
+      <Name>CapaEntidad</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CapaNegocio\CapaNegocio.csproj">
+      <Project>{de047b2d-d31e-4511-a61f-580233a17a69}</Project>
+      <Name>CapaNegocio</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
