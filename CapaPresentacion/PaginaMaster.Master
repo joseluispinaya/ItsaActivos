@@ -154,6 +154,7 @@
                                 <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-square-inc-cash"></i><span> Activos </span><span class="float-right"><i class="mdi mdi-plus"></i></span></a>
                                 <ul class="list-unstyled">
                                     <li><a href="FrmActivo.aspx">Nuevo Registro</a></li>
+                                    <li><a href="FrmPanelActivo.aspx">Registro Prueba</a></li>
                                     <li><a href="frmConsultaVenta.aspx">Consultar</a></li>
                                 </ul>
                             </li>

@@ -63,12 +63,12 @@ namespace CapaDatos
                 return new Respuesta<bool>
                 {
                     Estado = respuesta,
-                    Mensaje = respuesta ? "Se registro correctamente" : "Error al registrar"
+                    Mensaje = respuesta ? "Se Realizo el Registro Correctamente" : "Error al registrar intente mas tarde"
                 };
             }
             catch (Exception ex)
             {
-                return new Respuesta<bool> { Estado = false, Mensaje = "Ocurrió un error: " + ex.Message };
+                return new Respuesta<bool> { Estado = false, Mensaje = "Ocurrió un error BD: " + ex.Message };
             }
         }
 
@@ -160,6 +160,85 @@ namespace CapaDatos
                     {
                         comando.Parameters.AddWithValue("@IdGestion", idGestion);
                         comando.Parameters.AddWithValue("@IdCarrera", idCarrera);
+                        comando.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+
+                        using (SqlDataReader dr = comando.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                rptLista.Add(new EActivo()
+                                {
+                                    IdActivo = Convert.ToInt32(dr["IdActivo"]),
+                                    Codigo = dr["Codigo"].ToString(),
+                                    ValorCodigo = Convert.ToInt32(dr["ValorCodigo"]),
+                                    IdGestion = Convert.ToInt32(dr["IdGestion"]),
+                                    IdCarrera = Convert.ToInt32(dr["IdCarrera"]),
+                                    IdEstado = Convert.ToInt32(dr["IdEstado"]),
+                                    IdItem = Convert.ToInt32(dr["IdItem"]),
+                                    Cantidad = Convert.ToInt32(dr["Cantidad"]),
+                                    Descripcion = dr["DescripcionActivo"].ToString(),
+
+                                    Caracteristicas = dr["Caracteristicas"].ToString(),
+                                    ValorActivo = float.Parse(dr["ValorActivo"].ToString()),
+                                    Responsable = dr["Responsable"].ToString(),
+                                    Ubicacion = dr["Ubicacion"].ToString(),
+                                    Observacion = dr["Observacion"].ToString(),
+                                    Total = float.Parse(dr["Total"].ToString()),
+                                    Activo = Convert.ToBoolean(dr["Activo"]),
+                                    Gestion = new EGestion()
+                                    {
+                                        Descripcion = dr["DescripcionGestion"].ToString()
+                                    },
+                                    Carrera = new ECarrera()
+                                    {
+                                        Descripcion = dr["DescripcionCarrera"].ToString()
+                                    },
+                                    EstadoFisico = new EEstadoFisico()
+                                    {
+                                        Descripcion = dr["DescripcionEstado"].ToString()
+                                    },
+                                    Item = new EItem()
+                                    {
+                                        Descripcion = dr["DescripcionItem"].ToString()
+                                    },
+                                });
+                            }
+                        }
+                    }
+                }
+                return new Respuesta<List<EActivo>>()
+                {
+                    Estado = true,
+                    Data = rptLista,
+                    Mensaje = "Activos obtenidos correctamente"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<EActivo>>()
+                {
+                    Estado = false,
+                    Mensaje = "Ocurrió un error: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        public Respuesta<List<EActivo>> ObtenerActivosTresIds(int idGestion, int idCarrera, int idItem)
+        {
+            try
+            {
+                List<EActivo> rptLista = new List<EActivo>();
+
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand comando = new SqlCommand("usp_ObtenerActivosPorTresIds", con))
+                    {
+                        comando.Parameters.AddWithValue("@IdGestion", idGestion);
+                        comando.Parameters.AddWithValue("@IdCarrera", idCarrera);
+                        comando.Parameters.AddWithValue("@IdItem", idItem);
                         comando.CommandType = CommandType.StoredProcedure;
                         con.Open();
 

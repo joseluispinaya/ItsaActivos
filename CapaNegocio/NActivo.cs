@@ -36,5 +36,10 @@ namespace CapaNegocio
         {
             return DActivo.GetInstance().ObtenerActivosIds(idGestion, idCarrera);
         }
+
+        public Respuesta<List<EActivo>> ObtenerActivosTresIds(int idGestion, int idCarrera, int idItem)
+        {
+            return DActivo.GetInstance().ObtenerActivosTresIds(idGestion, idCarrera, idItem);
+        }
     }
 }

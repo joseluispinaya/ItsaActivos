@@ -38,6 +38,46 @@ namespace CapaPresentacion
         }
 
         [WebMethod]
+        public static Respuesta<List<EItem>> ObtenerItems()
+        {
+            try
+            {
+                Respuesta<List<EItem>> Lista = NCarrera.GetInstance().ObtenerItems();
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<EItem>>()
+                {
+                    Estado = false,
+                    Mensaje = "Error al obtener los Items: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        [WebMethod]
+        public static Respuesta<List<EEstadoFisico>> ObtenerEstadosFisi()
+        {
+            try
+            {
+                Respuesta<List<EEstadoFisico>> Lista = NCarrera.GetInstance().ObtenerEstadosFisi();
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<EEstadoFisico>>()
+                {
+                    Estado = false,
+                    Mensaje = "Error al obtener los Items: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        [WebMethod]
         public static Respuesta<List<ECarrera>> BuscarCarrera(string buscar)
         {
             Respuesta<List<ECarrera>> Lista = NCarrera.GetInstance().ObtenerCarreras();
@@ -54,6 +94,7 @@ namespace CapaPresentacion
             }
         }
 
+        //sin usar
         [WebMethod]
         public static Respuesta<List<EActivo>> ObtenerActivosId(int IdGestion, int IdCarrera)
         {
@@ -71,6 +112,52 @@ namespace CapaPresentacion
                     Mensaje = "Error al obtener los Activos: " + ex.Message,
                     Data = null
                 };
+            }
+        }
+
+        [WebMethod]
+        public static Respuesta<List<EActivo>> ObtenerActivosTresId(int IdGestion, int IdCarrera, int IdItem)
+        {
+            try
+            {
+                Respuesta<List<EActivo>> Lista = NActivo.GetInstance().ObtenerActivosTresIds(IdGestion, IdCarrera, IdItem);
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<EActivo>>()
+                {
+                    Estado = false,
+                    Mensaje = "Error al obtener los Activos: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        [WebMethod]
+        public static Respuesta<bool> Guardar(EActivo oActivo)
+        {
+            try
+            {
+                //var es = obj;
+                //if (oActivo != null)
+                //{
+                //    return new Respuesta<bool> { Estado = true, Mensaje = "Se registro correctamente" };
+                //}
+                //else
+                //{
+                //    return new Respuesta<bool> { Estado = false, Mensaje = "Error es nulo" };
+                //}
+
+                Respuesta<bool> respuesta = NActivo.GetInstance().RegistrarActivo(oActivo);
+
+                return respuesta;
+
+            }
+            catch (Exception ex)
+            {
+                return new Respuesta<bool> { Estado = false, Mensaje = "Ocurrió un error: " + ex.Message };
             }
         }
     }

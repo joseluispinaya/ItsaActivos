@@ -1,9 +1,40 @@
 ﻿
 var table;
 
+const MODELO_BASE = {
+    IdActivo: 0,
+    IdGestion: 0,
+    IdCarrera: 0,
+    IdEstado: 0,
+    IdItem: 0,
+    Cantidad: 0,
+    Descripcion: "",
+    Caracteristicas: "",
+    ValorActivo: 0.0, // Inicializado como float
+    Responsable: "",
+    Ubicacion: "",
+    Observacion: "",
+    Total: 0.0,
+}
+
+function ObtenerFecha() {
+
+    var d = new Date();
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    var output = (('' + day).length < 2 ? '0' : '') + day + '/' + (('' + month).length < 2 ? '0' : '') + month + '/' + d.getFullYear();
+
+    return output;
+}
+
 $(document).ready(function () {
+
+    $("#btnNuevoReg").hide();
+    $("#txtFechaRegis").val(ObtenerFecha());
     cargarGestiones();
+    cargarItems();
     cargarCarreras();
+    cargarEstadosFisi();
 
 })
 
@@ -15,13 +46,14 @@ function dtListaActivosId() {
 
     var request = {
         IdGestion: $("#cboGestion").val(),
-        IdCarrera: $("#txtIdCarrera").val()
+        IdCarrera: $("#txtIdCarrera").val(),
+        IdItem: $("#cboItem").val()
     };
 
     table = $("#tbActivos").DataTable({
         responsive: true,
         "ajax": {
-            "url": 'FrmActivo.aspx/ObtenerActivosId',
+            "url": 'FrmActivo.aspx/ObtenerActivosTresId',
             "type": "POST",
             "contentType": "application/json; charset=utf-8",
             "dataType": "json",
@@ -70,6 +102,38 @@ function dtListaActivosId() {
     });
 }
 
+$("#tbActivos tbody").on("click", ".btn-editar", function (e) {
+    e.preventDefault();
+    let filaSeleccionada;
+
+    if ($(this).closest("tr").hasClass("child")) {
+        filaSeleccionada = $(this).closest("tr").prev();
+    } else {
+        filaSeleccionada = $(this).closest("tr");
+    }
+
+    const modelo = table.row(filaSeleccionada).data();
+
+    $("#txtIdActivo").val(modelo.IdActivo);
+    //$("#cboGestion").val(modelo.IdGestion);
+    //$("#txtIdCarrera").val(modelo.IdCarrera);
+    //$("#txtNombreCarrera").val(modelo.Carrera.Descripcion);
+    $("#cboestadofi").val(modelo.IdEstado);
+    //$("#cboItem").val(modelo.IdItem);
+    $("#txtcantidad").val(modelo.Cantidad);
+    $("#txtDescripcion").val(modelo.Descripcion);
+    $("#txtCaracteristicas").val(modelo.Caracteristicas);
+    $("#txtvalorAct").val(modelo.ValorActivo);
+    $("#txtResponsable").val(modelo.Responsable);
+    $("#txtUbicacion").val(modelo.Ubicacion);
+    $("#txtObservacion").val(modelo.Observacion);
+    $("#txtTotal").val(modelo.Total);
+
+    $("#myLargeModalLabel").text("Editar Activo");
+
+    $("#modalActivo").modal("show");
+})
+
 function cargarGestiones() {
     $("#cboGestion").html("");
 
@@ -86,6 +150,56 @@ function cargarGestiones() {
                 $.each(data.d.Data, function (i, row) {
                     if (row.Activo === true) {
                         $("<option>").attr({ "value": row.IdGestion }).text(row.Descripcion).appendTo("#cboGestion");
+                    }
+
+                })
+            }
+
+        }
+    });
+}
+
+function cargarItems() {
+    $("#cboItem").html("");
+
+    $.ajax({
+        type: "POST",
+        url: "FrmActivo.aspx/ObtenerItems",
+        data: {},
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                $.each(data.d.Data, function (i, row) {
+                    if (row.Activo === true) {
+                        $("<option>").attr({ "value": row.IdItem }).text(row.Descripcion).appendTo("#cboItem");
+                    }
+
+                })
+            }
+
+        }
+    });
+}
+
+function cargarEstadosFisi() {
+    $("#cboestadofi").html("");
+
+    $.ajax({
+        type: "POST",
+        url: "FrmActivo.aspx/ObtenerEstadosFisi",
+        data: {},
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                $.each(data.d.Data, function (i, row) {
+                    if (row.Activo === true) {
+                        $("<option>").attr({ "value": row.IdEstado }).text(row.Descripcion).appendTo("#cboestadofi");
                     }
 
                 })
@@ -162,17 +276,14 @@ $("#cboBuscarCarrera").on("select2:select", function (e) {
     $("#txtIdCarrera").val(data.IdCarrera);
     $("#txtNombreCarrera").val(data.Descripcion);
 
-    dtListaActivosId();
+    //dtListaActivosId();
     $("#cboBuscarCarrera").val("").trigger("change")
     //console.log(data);
 });
 
-$('#btnNuevoReg').on('click', function () {
 
-    //if (parseInt($("#txtIdasocia").val()) == 0) {
-    //    swal("Mensaje", "Error debe seleccionar una Asociacion", "warning");
-    //    return;
-    //}
+$('#btnVerInfo').on('click', function () {
+    
 
     if (parseInt($("#txtIdCarrera").val()) === 0) {
         swal("Mensaje", "Error debe seleccionar una Carrera", "warning")
@@ -184,7 +295,144 @@ $('#btnNuevoReg').on('click', function () {
     }
 
     var cbge = $("#cboGestion").val();
+    var cbItem = $("#cboItem").val();
     var idcare = $("#txtIdCarrera").val();
-    swal("Mensaje", "IdGes: " + cbge + " IdCarrera: " + idcare, "success");
+
+    $("#btnNuevoReg").show();
+    dtListaActivosId();
+    //swal("Mensaje", "IdGes: " + cbge + " IdItem: " + cbItem + " IdCarrera: " + idcare, "success");
     //$("#modalTransa").modal("show");
+})
+$('#btnNuevoReg').on('click', function () {
+    
+    if (parseInt($("#txtIdCarrera").val()) === 0) {
+        swal("Mensaje", "Error debe seleccionar una Carrera", "warning")
+            .then(() => {
+                // Hacer focus en el select2
+                $('#cboBuscarCarrera').select2('open'); // Abre el dropdown de Select2
+            });
+        return;
+    }
+    var cbge = $('#cboGestion option:selected').text();
+    var cbItem = $('#cboItem option:selected').text();
+    var idcare = $("#txtNombreCarrera").val();
+    //swal("Mensaje", "Ges: " + cbge + " Item: " + cbItem + " Carrera: " + idcare, "success");
+
+    $("#txtIdActivo").val("0");
+    //$("#txtIdCarrera").val("0");
+    //$("#txtIdGestion").val("0");
+    //$("#txtNombreCarrera").val("");
+    $("#txtcantidad").val("0");
+    $("#txtvalorAct").val("0");
+    $("#txtTotal").val("0");
+    $("#txtResponsable").val("");
+    $("#txtUbicacion").val("");
+    $("#txtDescripcion").val("");
+    $("#txtObservacion").val("");
+    $("#txtCaracteristicas").val("");
+    //$("select#cboGestion").prop('selectedIndex', 0);
+    //$("select#cboItem").prop('selectedIndex', 0);
+    $("select#cboestadofi").prop('selectedIndex', 0);
+
+    $("#myLargeModalLabel").text("Registrar Activo");
+
+    $("#modalActivo").modal("show");
+})
+
+function dataRegistrar() {
+    const modelo = structuredClone(MODELO_BASE);
+    modelo["IdActivo"] = parseInt($("#txtIdActivo").val());
+    modelo["IdGestion"] = $("#cboGestion").val();
+    modelo["IdCarrera"] = $("#txtIdCarrera").val();
+    modelo["IdEstado"] = $("#cboestadofi").val();
+    modelo["IdItem"] = $("#cboItem").val();
+
+    modelo["Cantidad"] = $("#txtcantidad").val();
+    modelo["Descripcion"] = $("#txtDescripcion").val();
+    modelo["Caracteristicas"] = $("#txtCaracteristicas").val();
+    modelo["ValorActivo"] = parseFloat($("#txtvalorAct").val());
+    modelo["Responsable"] = $("#txtResponsable").val();
+    modelo["Ubicacion"] = $("#txtUbicacion").val();
+    modelo["Observacion"] = $("#txtObservacion").val();
+    modelo["Total"] = parseFloat($("#txtTotal").val());
+
+    var request = {
+        oActivo: modelo
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "FrmActivo.aspx/Guardar",
+        data: JSON.stringify(request),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        beforeSend: function () {
+            $(".modal-content").LoadingOverlay("show");
+        },
+        success: function (response) {
+            $(".modal-content").LoadingOverlay("hide");
+            if (response.d.Estado) {
+                dtListaActivosId();
+                $('#modalActivo').modal('hide');
+                swal("Mensaje", response.d.Mensaje, "success");
+                //swal("Mensaje", "Registro Exitoso", "success");
+            } else {
+                swal("Mensaje", response.d.Mensaje, "warning");
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            $(".modal-content").LoadingOverlay("hide");
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        complete: function () {
+            // Rehabilitar el botón después de que la llamada AJAX se complete (éxito o error)
+            $('#btnGuardarCambiosA').prop('disabled', false);
+            $("#btnNuevoReg").hide();
+        }
+    });
+}
+
+$('#btnGuardarCambiosA').on('click', function () {
+
+    // Deshabilitar el botón para evitar múltiples envíos
+    $('#btnGuardarCambiosA').prop('disabled', true);
+
+    const inputs = $("input.model").serializeArray();
+    const inputs_sin_valor = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_sin_valor.length > 0) {
+        const mensaje = `Debe completar el campo : "${inputs_sin_valor[0].name}"`;
+        toastr.warning("", mensaje)
+        $(`input[name="${inputs_sin_valor[0].name}"]`).focus()
+
+        // Rehabilitar el botón si hay campos vacíos
+        $('#btnGuardarCambiosA').prop('disabled', false);
+        return;
+    }
+    
+
+    if ($("#txtCaracteristicas").val().trim() === "") {
+        toastr.warning("", "Debe completar el campo Caracteristica");
+        $("#txtCaracteristicas").focus();
+        $('#btnGuardarCambiosA').prop('disabled', false);
+        return;
+    }
+
+    //var cantidadA = parseFloat($("#txtcantidad").val().trim());
+    var cantidadA = parseInt($("#txtcantidad").val().trim());
+    if (isNaN(cantidadA) || cantidadA === 0) {
+        toastr.warning("", "Debe ingresar una cantidad válida");
+        $("#txtcantidad").focus();
+        $('#btnGuardarCambiosA').prop('disabled', false);
+        return;
+    }
+
+    if (parseInt($("#txtIdActivo").val()) === 0) {
+        dataRegistrar();
+    } else {
+        //dataActualizar();
+        swal("Mensaje", "Falta Implementar", "warning");
+        // Rehabilitar el botón si hay campos vacíos
+        $('#btnGuardarCambiosA').prop('disabled', false);
+    }
 })
