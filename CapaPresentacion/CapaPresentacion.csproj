@@ -373,11 +373,13 @@
     <Content Include="assets\toastr\toastr.min.css" />
     <Content Include="assets\toastr\toastr.min.js" />
     <Content Include="FrmActivo.aspx" />
+    <Content Include="FrmConsultaActivo.aspx" />
     <Content Include="FrmPanelActivo.aspx" />
     <Content Include="Imagenes\itsass.jpg" />
     <Content Include="Imagenes\sinimagen.png" />
     <Content Include="Inicio.aspx" />
     <Content Include="js\FrmActivo.js" />
+    <Content Include="js\FrmConsultaActivo.js" />
     <Content Include="js\FrmPanelActivo.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -388,6 +390,13 @@
     </Compile>
     <Compile Include="FrmActivo.aspx.designer.cs">
       <DependentUpon>FrmActivo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FrmConsultaActivo.aspx.cs">
+      <DependentUpon>FrmConsultaActivo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FrmConsultaActivo.aspx.designer.cs">
+      <DependentUpon>FrmConsultaActivo.aspx</DependentUpon>
     </Compile>
     <Compile Include="FrmPanelActivo.aspx.cs">
       <DependentUpon>FrmPanelActivo.aspx</DependentUpon>

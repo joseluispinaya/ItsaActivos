@@ -30,5 +30,6 @@ namespace CapaEntidad
         public ECarrera Carrera { get; set; }
         public EEstadoFisico EstadoFisico { get; set; }
         public EItem Item { get; set; }
+        
     }
 }

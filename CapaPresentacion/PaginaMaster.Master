@@ -158,6 +158,13 @@
                                     <li><a href="frmConsultaVenta.aspx">Consultar</a></li>
                                 </ul>
                             </li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-magnify"></i><span> Consultas </span><span class="float-right"><i class="mdi mdi-plus"></i></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="FrmConsultaActivo.aspx">Consulta Activos</a></li>
+                                    <li><a href="#">Consultar</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                     <div class="clearfix"></div>
