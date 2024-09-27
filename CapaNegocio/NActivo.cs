@@ -32,6 +32,11 @@ namespace CapaNegocio
             return DActivo.GetInstance().ObtenerActivos();
         }
 
+        public Respuesta<List<EActivo>> ObtenerActivosIdCarrera(int idCarrera)
+        {
+            return DActivo.GetInstance().ObtenerActivosIdCarrera(idCarrera);
+        }
+
         public Respuesta<List<EActivo>> ObtenerActivosIds(int idGestion, int idCarrera)
         {
             return DActivo.GetInstance().ObtenerActivosIds(idGestion, idCarrera);
@@ -80,6 +85,47 @@ namespace CapaNegocio
                 {
                     Estado = false,
                     Mensaje = "Ocurrió un error: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+
+        public Respuesta<List<EGestion>> ObtenerActivosIdsRptCarrera(int idCarrera)
+        {
+            try
+            {
+                // Obtener los items siempre retorna datos
+                Respuesta<List<EGestion>> ListaGes = DCarrera.GetInstance().ObtenerGestiones();
+                var ListaItm = ListaGes.Data;
+
+                // Obtener los activos puede retornar null o una lista vacía
+                Respuesta<List<EActivo>> Lista = DActivo.GetInstance().ObtenerActivosIdCarrera(idCarrera);
+                var listafi = Lista?.Data ?? new List<EActivo>(); // Si Lista.Data es null, inicializa como lista vacía
+
+                // Crear la lista completa de EItem, con los activos filtrados
+                List<EGestion> rptListaCompleta = ListaItm.Select(item => new EGestion
+                {
+                    IdGestion = item.IdGestion,
+                    Descripcion = item.Descripcion,
+                    Activo = item.Activo,
+                    ListaActivos = listafi.Where(act => act.IdGestion == item.IdGestion).ToList() // Filtrar activos por IdItem
+                }).ToList();
+
+                return new Respuesta<List<EGestion>>()
+                {
+                    Estado = true,
+                    Data = rptListaCompleta,
+                    Mensaje = "Items obtenidos correctamente"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Devolver un mensaje de error detallado
+                return new Respuesta<List<EGestion>>()
+                {
+                    Estado = false,
+                    Mensaje = $"Ocurrió un error en ObtenerActivosIdsRpt: {ex.Message}",
                     Data = null
                 };
             }

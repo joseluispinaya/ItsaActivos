@@ -18,6 +18,11 @@
         .select2 {
             width: 100% !important;
         }
+        @media print {
+            #omitirhisb {
+                display: none !important;
+            }
+        }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="titulo" runat="server">
@@ -35,7 +40,7 @@
                     </div>--%>
                     <div class="row">
                         <div class="col-sm-12">
-                            <ul class="nav nav-tabs nav-justified" role="tablist">
+                            <ul class="nav nav-tabs nav-justified" role="tablist" id="menuR">
                                 <li class="nav-item">
                                     <a class="nav-link active" id="home-tab-2" data-toggle="tab" href="#home-2" role="tab" aria-controls="home-2" aria-selected="false">
                                         <span class="d-block d-sm-none"><i class="fa fa-home"></i></span>
@@ -105,28 +110,25 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="card">
-                                                <div class="card-header bg-primary">
-                                                    <div class="form-horizontal" id="omitirhabilmes">
+                                                <div class="card-header bg-primary" id="omitirhisb">
+                                                    <div class="form-horizontal">
                                                         <div class="form-group row m-b-0">
-                                                            <div class="col-sm-2 text-center">
-                                                                <h3 class="card-title m-0">Gestion</h3>
+                                                            <div class="col-sm-3 text-right">
+                                                                <h3 class="card-title m-0">Buscar Carrera</h3>
                                                             </div>
-                                                            <div class="col-sm-2">
-                                                                <select class="form-control form-control-sm" id="cboGestiRa">
+                                                            <div class="col-sm-3">
+                                                                <select class="form-control form-control-sm" id="cboBuscarCarreraNu">
+                                                                    <option value=""></option>
                                                                 </select>
                                                             </div>
-                                                            <div class="col-sm-2 text-center">
-                                                                <h3 class="card-title m-0">Mes</h3>
+                                                            <div class="col-sm-3">
+                                                                <input type="text" class="form-control input-sm" id="txtNombreCarreraNu" disabled />
                                                             </div>
-                                                            <div class="col-sm-2">
-                                                                <select class="form-control form-control-sm" id="cboMesR">
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-4">
+                                                            <div class="col-sm-3">
                                                                 <button type="button" id="btnConsultarM" class="btn btn-sm btn-success">
-                                                                    <i class="fas fa-search"></i> Consultar
+                                                                    <i class="fas fa-search"></i> Ver
                                                                 </button>
-                                                                <button type="button" id="btnImprimiM" class="btn btn-sm btn-success" style="margin-left: 30px;">
+                                                                <button type="button" id="btnImprimiM" class="btn btn-sm btn-success">
                                                                     <i class="fas fa-print"></i> Imprimir
                                                                 </button>
                                                             </div>
@@ -134,25 +136,50 @@
                                                     </div>
                                                 </div>
                                                 <div class="card-body">
-                                                    <h5 id="txtdetallemes" class="m-b-15 m-t-0">Hola</h5>
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
+                                                    <input id="txtIdCarreraNu" class="model" name="IdCarrera" value="0" type="hidden" />
+                                                    <div class="row" id="logomenbre" style="display: none;">
+                                                        <div class="col-sm-12 text-center">
+                                                            <img src="assets/images/imagen2.png" alt="Header Image" style="width: 100%;" />
+                                                            <h4 class="m-b-0 m-t-10">INFORME DE ACTIVOS POR CARRERA</h4>
+                                                        </div>
+                                                        <%--<div class="col-12">
+                                                            <div class="invoice-title">
+                                                                <h4 class="float-right">Order # 12345</h4>
+                                                                <h3 class="m-t-0">WEBADMIN</h3>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <address>
+                                                                        <img src="assets/images/users/avatar-1.jpg" width="100" height="100" alt="User Image" style="border-radius: 50%;">
+                                                                    </address>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <address>
+                                                                        <strong>Shipped To:</strong><br>
+                                                                        Kenny Rigdon<br>
+                                                                        1234 Main<br>
+                                                                        Springfield, ST 54321
+                                                                    </address>
+                                                                </div>
+                                                                <div class="col-4 text-right">
+                                                                    <address>
+                                                                        <strong>Shipped To:</strong><br>
+                                                                        Kenny Rigdon<br>
+                                                                        Apt. 4B<br>
+                                                                        Springfield, ST 54321
+                                                                    </address>
+                                                                </div>
+                                                            </div>
+                                                        </div>--%>
+                                                    </div>
 
-                                                            <table id="tbpormes" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Codigo</th>
-                                                                        <th>Monto</th>
-                                                                        <th>Fecha Pago</th>
-                                                                        <th>Nombres PCD</th>
-                                                                        <th>Nombre Cajero</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                </tbody>
-                                                            </table>
+                                                    <div class="row">
+                                                        <div class="col-lg-12" id="datoss">
+                                                            <!-- aqui muestro mis datos de mi funcion  -->
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>

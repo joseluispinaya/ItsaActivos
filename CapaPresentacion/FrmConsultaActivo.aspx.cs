@@ -35,5 +35,25 @@ namespace CapaPresentacion
                 };
             }
         }
+
+        [WebMethod]
+        public static Respuesta<List<EGestion>> ObtenerActivosPorCarrera(int IdCarrera)
+        {
+            try
+            {
+                Respuesta<List<EGestion>> Lista = NActivo.GetInstance().ObtenerActivosIdsRptCarrera(IdCarrera);
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<EGestion>>()
+                {
+                    Estado = false,
+                    Mensaje = "Error al obtener los Activos: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
     }
 }
