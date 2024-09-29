@@ -42,5 +42,10 @@ namespace CapaNegocio
         {
             return DCarrera.GetInstance().ObtenerEstadosFisi();
         }
+
+        public Respuesta<List<ERol>> ObtenerRoles()
+        {
+            return DCarrera.GetInstance().ObtenerRoles();
+        }
     }
 }

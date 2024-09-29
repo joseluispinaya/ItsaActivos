@@ -216,5 +216,51 @@ namespace CapaDatos
                 };
             }
         }
+
+        public Respuesta<List<ERol>> ObtenerRoles()
+        {
+            try
+            {
+                List<ERol> rptLista = new List<ERol>();
+
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand comando = new SqlCommand("usp_ObtenerRoles", con))
+                    {
+                        comando.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+
+                        using (SqlDataReader dr = comando.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                rptLista.Add(new ERol()
+                                {
+                                    IdRol = Convert.ToInt32(dr["IdRol"]),
+                                    Descripcion = dr["Descripcion"].ToString(),
+                                    Activo = Convert.ToBoolean(dr["Activo"])
+                                });
+                            }
+                        }
+                    }
+                }
+                return new Respuesta<List<ERol>>()
+                {
+                    Estado = true,
+                    Data = rptLista,
+                    Mensaje = "Roles obtenidos correctamente"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<ERol>>()
+                {
+                    Estado = false,
+                    Mensaje = "Ocurrió un error: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
     }
 }

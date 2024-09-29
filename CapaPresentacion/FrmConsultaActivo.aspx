@@ -87,7 +87,10 @@
                                                         <div class="form-group col-sm-3">
                                                             <br />
                                                             <button type="button" id="btnBuscarR" class="btn btn-success">
-                                                                <i class="fas fa-eye"></i> Ver Detalle
+                                                                <i class="fas fa-eye"></i> Ver
+                                                            </button>
+                                                            <button type="button" id="btnImprimiUn" class="btn btn-sm btn-success">
+                                                                <i class="fas fa-print"></i> Imprimir
                                                             </button>
                                                         </div>
                                                     </div>
@@ -250,6 +253,8 @@
     </div>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="footer" runat="server">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
     <script src="assets/select2/select2.min.js"></script>
     <script src="assets/select2/es.min.js"></script>
     <script src="js/FrmConsultaActivo.js" type="text/javascript"></script>
