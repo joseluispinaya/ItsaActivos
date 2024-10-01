@@ -115,6 +115,8 @@
     <Content Include="assets\images\big\img1.jpg" />
     <Content Include="assets\images\favicon.ico" />
     <Content Include="assets\images\imagen2.png" />
+    <Content Include="assets\images\logfina.jpg" />
+    <Content Include="assets\images\logofin.jpg" />
     <Content Include="assets\images\logoits.png" />
     <Content Include="assets\images\logo_sm.png" />
     <Content Include="assets\images\logo_white_2.png" />
@@ -161,6 +163,7 @@
     <Content Include="assets\js\popper.min.js" />
     <Content Include="assets\js\waves.js" />
     <Content Include="assets\js\wow.min.js" />
+    <Content Include="assets\loginstilo.css" />
     <Content Include="assets\pages\calendar-init.js" />
     <Content Include="assets\pages\chartjs.init.js" />
     <Content Include="assets\pages\dashboard.js" />
@@ -387,6 +390,7 @@
     <Content Include="Imagenes\itsass.jpg" />
     <Content Include="Imagenes\membrete.png" />
     <Content Include="Imagenes\sinimagen.png" />
+    <Content Include="IniciarSesion.aspx" />
     <Content Include="Inicio.aspx" />
     <Content Include="inicioP\dist\css\output.css" />
     <Content Include="inicioP\dist\img\img_carrera\p10.jpg" />
@@ -410,6 +414,8 @@
     <Content Include="js\FrmConsultaActivo.js" />
     <Content Include="js\FrmPanelActivo.js" />
     <Content Include="js\FrmUsuarios.js" />
+    <Content Include="js\IniciarSesion.js" />
+    <Content Include="js\menuMaster.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -447,6 +453,13 @@
     </Compile>
     <Compile Include="FrmUsuarios.aspx.designer.cs">
       <DependentUpon>FrmUsuarios.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IniciarSesion.aspx.cs">
+      <DependentUpon>IniciarSesion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IniciarSesion.aspx.designer.cs">
+      <DependentUpon>IniciarSesion.aspx</DependentUpon>
     </Compile>
     <Compile Include="Inicio.aspx.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>

@@ -125,7 +125,7 @@ namespace CapaPresentacion
                 return new Respuesta<bool>
                 {
                     Estado = false,
-                    Valor = "Ocurrió un error: " + ex.Message
+                    Mensaje = "Ocurrió un error: " + ex.Message
                 };
             }
         }

@@ -79,14 +79,13 @@
                                 <a href="#" class="dropdown-toggle profile waves-effect waves-light" data-toggle="dropdown" aria-expanded="true">
                                     <img src="assets/images/users/avatar-1.jpg" alt="user-img" id="imgUsuarioMe" class="rounded-circle">
                                     <span class="profile-username">
-                                        <strong id="nombreusuariome">nombre user</strong>
+                                        <strong id="nombreusuariome"></strong>
                                         <br />
-                                        <small id="rolusuariome">rolll</small>
+                                        <small id="rolusuariome"></small>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#" class="dropdown-item">Perfil</a></li>
-                                    <li><a href="javascript:void(0)" class="dropdown-item"><span class="badge badge-success float-right">5</span> Ajustes </a></li>
+                                    <%--<li><a href="#" class="dropdown-item">Perfil</a></li>--%>
                                     <li class="dropdown-divider"></li>
                                     <li><a id="close" class="dropdown-item" style="cursor: pointer;">Salir</a></li>
                                 </ul>
@@ -131,7 +130,7 @@
                                 <a href="Inicio.aspx" class="waves-effect"><i class="mdi mdi-home"></i><span>Inicio <span class="badge badge-primary float-right">1</span></span></a>
                             </li>
 
-                            <li class="has_sub">
+                            <li class="has_sub adminic">
                                 <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-account-key"></i><span>Usuarios </span><span class="float-right"><i class="mdi mdi-plus"></i></span></a>
                                 <ul class="list-unstyled">
                                     <li><a href="FrmUsuarios.aspx">Usuarios</a></li>
@@ -260,7 +259,7 @@
 
         <script src="assets/js/app.js"></script>
         <script src="assets/plugins/loadingoverlay/loadingoverlay.js"></script>
-        <%--<script src="js/menuMasterr.js" type="text/javascript"></script>--%>
+        <script src="js/menuMaster.js" type="text/javascript"></script>
         <asp:ContentPlaceHolder ID="footer" runat="server"></asp:ContentPlaceHolder>
     </body>
 </html>

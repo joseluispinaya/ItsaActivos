@@ -125,12 +125,10 @@
                                             href="https://itsariberalta.edu.bo/academico/login.aspx"
                                             target="_blank">Sistema de
                                             Notas</a></li>
-                                    <li class="hover:text-secundario"><a
-                                            href="#"
-                                            target="_blank">Administracion</a></li>
-                                    <li class="hover:text-secundario"><a
-                                            href="#"
-                                            target="_blank">Gestion de Proyectos</a></li>
+                                    <li class="hover:text-secundario">
+                                        <a href="IniciarSesion.aspx">Administracion</a></li>
+                                    <li class="hover:text-secundario">
+                                        <a href="IniciarSesion.aspx">Gestion de Proyectos</a></li>
                                     <li class="hover:text-secundario"><a href="#"
                                             target="_blank">Multimedia</a></li>
                                     <li class="hover:text-secundario pb-4"><a
