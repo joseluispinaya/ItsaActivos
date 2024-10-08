@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="NActivo.cs" />
     <Compile Include="NCarrera.cs" />
+    <Compile Include="NItem.cs" />
     <Compile Include="NUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
