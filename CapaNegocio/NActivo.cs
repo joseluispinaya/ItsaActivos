@@ -41,6 +41,10 @@ namespace CapaNegocio
         {
             return DActivo.GetInstance().ObtenerActivosIds(idGestion, idCarrera);
         }
+        public Respuesta<List<EActivo>> ObtenerActivosIdGesItemLis(int idGestion, int idItem)
+        {
+            return DActivo.GetInstance().ObtenerActivosIdGesItem(idGestion, idItem);
+        }
 
         public Respuesta<List<EActivo>> ObtenerActivosTresIds(int idGestion, int idCarrera, int idItem)
         {
@@ -125,7 +129,7 @@ namespace CapaNegocio
                 return new Respuesta<List<EGestion>>()
                 {
                     Estado = false,
-                    Mensaje = $"Ocurrió un error en ObtenerActivosIdsRpt: {ex.Message}",
+                    Mensaje = $"Ocurrió un error en ObtenerActivosIdsRptCarrera: {ex.Message}",
                     Data = null
                 };
             }
@@ -164,6 +168,47 @@ namespace CapaNegocio
             {
                 // Devolver un mensaje de error detallado
                 return new Respuesta<List<EItem>>()
+                {
+                    Estado = false,
+                    Mensaje = $"Ocurrió un error en ObtenerActivosIdsRpt: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+
+        public Respuesta<List<ECarrera>> ObtenerActivosIdGesItem(int idGestion, int idItem)
+        {
+            try
+            {
+                // Obtener los items siempre retorna datos
+                Respuesta<List<ECarrera>> ListaItems = DCarrera.GetInstance().ObtenerCarreras();
+                var ListaItm = ListaItems.Data;
+
+                // Obtener los activos puede retornar null o una lista vacía
+                Respuesta<List<EActivo>> Lista = DActivo.GetInstance().ObtenerActivosIdGesItem(idGestion, idItem);
+                var listafi = Lista?.Data ?? new List<EActivo>(); // Si Lista.Data es null, inicializa como lista vacía
+
+                // Crear la lista completa de EItem, con los activos filtrados
+                List<ECarrera> rptListaCompleta = ListaItm.Select(item => new ECarrera
+                {
+                    IdCarrera = item.IdCarrera,
+                    Descripcion = item.Descripcion,
+                    FechaRegistro = item.FechaRegistro,
+                    Activo = item.Activo,
+                    ListaActivos = listafi.Where(act => act.IdCarrera == item.IdCarrera).ToList() // Filtrar activos por IdItem
+                }).ToList();
+
+                return new Respuesta<List<ECarrera>>()
+                {
+                    Estado = true,
+                    Data = rptListaCompleta,
+                    Mensaje = "Items obtenidos correctamente"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Devolver un mensaje de error detallado
+                return new Respuesta<List<ECarrera>>()
                 {
                     Estado = false,
                     Mensaje = $"Ocurrió un error en ObtenerActivosIdsRpt: {ex.Message}",

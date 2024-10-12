@@ -50,13 +50,13 @@
                                 <li class="nav-item">
                                     <a class="nav-link" id="profile-tab-2" data-toggle="tab" href="#profile-2" role="tab" aria-controls="profile-2" aria-selected="true">
                                         <span class="d-block d-sm-none"><i class="fa fa-user"></i></span>
-                                        <span class="d-none d-sm-block">Por Carrera</span>
+                                        <span class="d-none d-sm-block">Activos Por Carrera</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="message-tab-2" data-toggle="tab" href="#message-2" role="tab" aria-controls="message-2" aria-selected="false">
                                         <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                                        <span class="d-none d-sm-block">Por Implementar</span>
+                                        <span class="d-none d-sm-block">Activos General</span>
                                     </a>
                                 </li>
                             </ul>
@@ -190,55 +190,43 @@
 
                                 </div>
                                 <div class="tab-pane fade" id="message-2" role="tabpanel" aria-labelledby="message-tab-2">
-                                    
+
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="card">
-                                                <div class="card-header bg-primary">
-                                                    <div class="form-horizontal" id="omitirhabil">
-                                                        <div class="form-group row m-b-0">
+                                                <div class="card-body">
+                                                    <div class="form-horizontal">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-1 control-label" for="cboGestionGene">Gestion</label>
                                                             <div class="col-sm-2">
-                                                            </div>
-                                                            <div class="col-sm-4 text-right">
-                                                                <h3 class="card-title m-0"><i class="fas fa-user"></i> Seleccione Consulta</h3>
-                                                            </div>
-                                                            <div class="col-sm-3">
-                                                                <select class="form-control form-control-sm" id="cboEstadoBon">
-                                                                    <option value="0">Mostrar Todos PCD</option>
-                                                                    <option value="1">PCD Habilitados</option>
-                                                                    <option value="2">PCD Inhabilitados</option>
+                                                                <select class="form-control form-control-sm" id="cboGestionGene">
                                                                 </select>
                                                             </div>
-                                                            <div class="col-sm-3">
-                                                                <button type="button" id="btnEjemploa" class="btn btn-sm btn-success">
-                                                                    <i class="fas fa-tags"></i> Imprimir
+                                                            <label class="col-sm-1 control-label" for="cboItemGen">Item</label>
+                                                            <div class="col-sm-4">
+                                                                <select class="form-control form-control-sm" id="cboItemGen">
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-2 text-center">
+                                                                <button type="button" id="btnBuscarGe" class="btn btn-sm btn-success">
+                                                                    <i class="fas fa-eye"></i> Ver Detalle
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-sm-2 text-left">
+                                                                <button type="button" id="btnImprimiGe" class="btn btn-sm btn-info">
+                                                                    <i class="fas fa-print"></i> Imprimir
                                                                 </button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="card-body">
-                                                    <h5 id="txtdetallein" class="m-b-15 m-t-0"></h5>
+
+                                                    <h4 id="iddetallet" class="m-b-10 m-t-10">Detalle Consulta</h4>
+                                                    <hr />
                                                     <div class="row">
                                                         <div class="col-sm-12">
-
-                                                            <table id="tbpcdbosi" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Asociacion</th>
-                                                                        <th>Discapacidad</th>
-                                                                        <th>Nro CI</th>
-                                                                        <th>Nombres</th>
-                                                                        <th>Apellidos</th>
-                                                                        <th>Tutor</th>
-                                                                        <th>Estado</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                </tbody>
-                                                            </table>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>

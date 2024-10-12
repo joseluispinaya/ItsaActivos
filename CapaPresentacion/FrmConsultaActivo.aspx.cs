@@ -55,5 +55,25 @@ namespace CapaPresentacion
                 };
             }
         }
+
+        [WebMethod]
+        public static Respuesta<List<ECarrera>> ObtenerActivosGestionyItem(int IdGestion, int IdItem)
+        {
+            try
+            {
+                Respuesta<List<ECarrera>> Lista = NActivo.GetInstance().ObtenerActivosIdGesItem(IdGestion, IdItem);
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error inesperado
+                return new Respuesta<List<ECarrera>>()
+                {
+                    Estado = false,
+                    Mensaje = "Error al obtener los Activos: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
     }
 }

@@ -30,19 +30,19 @@
                             <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="false">
                                     <span class="d-block d-sm-none"><i class="fa fa-home"></i></span>
-                                    <span class="d-none d-sm-block">Items</span>
+                                    <span class="d-none d-sm-block">Registro Items</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">
                                     <span class="d-block d-sm-none"><i class="fa fa-user"></i></span>
-                                    <span class="d-none d-sm-block">Carreras</span>
+                                    <span class="d-none d-sm-block">Registro Carreras</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="message-tab" data-toggle="tab" href="#message" role="tab" aria-controls="message" aria-selected="false">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                                    <span class="d-none d-sm-block">Gestiones</span>
+                                    <span class="d-none d-sm-block">Registro Gestiones</span>
                                 </a>
                             </li>
                         </ul>
@@ -130,7 +130,7 @@
                                                             <div class="form-group col-sm-7 text-center">
                                                                 <br />
                                                                 <button type="button" id="btnGuardarCarrera" class="btn btn-sm btn-success">
-                                                                    <i class="fas fa-eye"></i>Guardar Cambios
+                                                                    <i class="fas fa-eye"></i> Guardar Cambios
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -159,7 +159,60 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="message" role="tabpanel" aria-labelledby="message-tab">
-                                <p>Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.</p>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="card" id="loadReG">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <input id="txtIdGestion" class="model" name="IdGestion" value="0" type="hidden" />
+                                                        <div class="form-row">
+                                                            <div class="form-group col-sm-6">
+                                                                <label for="txtDescripcionG">Descripcion</label>
+                                                                <input type="text" class="form-control input-sm model" id="txtDescripcionG" name="DescripcionG">
+                                                            </div>
+                                                            <div class="form-group col-sm-6">
+                                                                <label for="cboEstadoG">Estado</label>
+                                                                <select class="form-control form-control-sm" id="cboEstadoG">
+                                                                    <option value="1">Activo</option>
+                                                                    <option value="0">No Activo</option>
+                                                                </select>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="form-row">
+                                                            <%--<div class="form-group col-sm-5">
+                                                                
+                                                            </div>--%>
+                                                            <div class="form-group col-sm-12 text-center">
+                                                                <%--<br />--%>
+                                                                <button type="button" id="btnGuardarGestion" class="btn btn-sm btn-success">
+                                                                    <i class="fas fa-eye"></i> Guardar Cambios
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-sm-8">
+
+                                                        <table id="tbGesti" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Id</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th>Estado</th>
+                                                                    <th>Accion</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

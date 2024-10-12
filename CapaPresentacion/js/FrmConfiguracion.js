@@ -6,8 +6,10 @@ var tableg;
 $(document).ready(function () {
     cargarItems();
     cargarCarreras();
+    cargarGestiones();
     $("#cboEstado").prop("disabled", true);
     $("#cboEstadoC").prop("disabled", true);
+    $("#cboEstadoG").prop("disabled", true);
 })
 
 function cargarItems() {
@@ -367,7 +369,7 @@ $('#btnGuardarCarrera').on('click', function () {
 
     if ($("#txtDescripcionC").val().trim() == "") {
         toastr.warning("", "Debe completar el campo Descripcion");
-        $("#txtDescripcion").focus();
+        $("#txtDescripcionC").focus();
         return;
     }
 
@@ -375,5 +377,189 @@ $('#btnGuardarCarrera').on('click', function () {
         registerDataCarrera();
     } else {
         editarDataCarrera();
+    }
+})
+
+
+//funciones para gestiones
+function cargarGestiones() {
+    // Verificar si el DataTable ya está inicializado
+    if ($.fn.DataTable.isDataTable("#tbGesti")) {
+        // Destruir el DataTable existente
+        $("#tbGesti").DataTable().destroy();
+        // Limpiar el contenedor del DataTable
+        $('#tbGesti tbody').empty();
+    }
+
+    tableg = $("#tbGesti").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": 'FrmConfiguracion.aspx/ObtenerGestion',
+            "type": "POST", // Cambiado a POST
+            "contentType": "application/json; charset=utf-8",
+            "dataType": "json",
+            "data": function (d) {
+                return JSON.stringify(d);
+            },
+            "dataSrc": function (json) {
+                //console.log("Response from server:", json.d.objeto);
+                if (json.d.Estado) {
+                    return json.d.Data; // Asegúrate de que esto apunta al array de datos
+                } else {
+                    return [];
+                }
+            }
+        },
+        "columns": [
+            { "data": "IdGestion", "visible": false, "searchable": false },
+            { "data": "Descripcion" },
+            {
+                "data": "Activo", render: function (data) {
+                    if (data == true)
+                        return '<span class="badge badge-primary">Activo</span>';
+                    else
+                        return '<span class="badge badge-danger">No Activo</span>';
+                }
+            },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-editar btn-sm mr-2"><i class="fas fa-pencil-alt"></i></button>' +
+                    '<button class="btn btn-danger btn-eliminar btn-sm"><i class="fas fa-trash-alt"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "80px"
+            }
+        ],
+        "order": [[0, "desc"]],
+        "dom": "Bfrtip",
+        "buttons": [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Informe Gestiones',
+                exportOptions: {
+                    columns: [1, 2] // Ajusta según las columnas que desees exportar
+                }
+            }
+        ],
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
+        }
+    });
+}
+
+$("#tbGesti tbody").on("click", ".btn-editar", function (e) {
+    e.preventDefault();
+    let filaSeleccionada;
+
+    if ($(this).closest("tr").hasClass("child")) {
+        filaSeleccionada = $(this).closest("tr").prev();
+    } else {
+        filaSeleccionada = $(this).closest("tr");
+    }
+
+    const model = tableg.row(filaSeleccionada).data();
+    //console.log(model);
+    $("#txtIdGestion").val(model.IdGestion);
+    $("#txtDescripcionG").val(model.Descripcion);
+    $("#cboEstadoG").val(model.Activo == true ? 1 : 0);
+    $("#cboEstadoG").prop("disabled", false);
+})
+
+function registerDataGestion() {
+
+    var request = {
+        eGestion: {
+            IdGestion: parseInt($("#txtIdGestion").val()),
+            Descripcion: $("#txtDescripcionG").val()
+        }
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "FrmConfiguracion.aspx/RegistrarGestion",
+        data: JSON.stringify(request),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        beforeSend: function () {
+            // Mostrar overlay de carga antes de enviar la solicitud modal-content
+            $("#loadReG").LoadingOverlay("show");
+        },
+        success: function (response) {
+            $("#loadReG").LoadingOverlay("hide");
+            if (response.d.Estado) {
+                cargarGestiones();
+
+                $("#txtIdGestion").val("0");
+                $("#txtDescripcionG").val("");
+
+                swal("Mensaje", response.d.Mensaje, "success");
+
+            } else {
+                swal("Mensaje", response.d.Mensaje, "warning");
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            $("#loadReG").LoadingOverlay("hide");
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        }
+    });
+}
+
+function editarDataGestion() {
+
+    var request = {
+        eGestion: {
+            IdGestion: parseInt($("#txtIdGestion").val()),
+            Descripcion: $("#txtDescripcionG").val(),
+            Activo: ($("#cboEstadoG").val() == "1" ? true : false)
+        }
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "FrmConfiguracion.aspx/ActualizarGestion",
+        data: JSON.stringify(request),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        beforeSend: function () {
+            // Mostrar overlay de carga antes de enviar la solicitud modal-content
+            $("#loadReG").LoadingOverlay("show");
+        },
+        success: function (response) {
+            $("#loadReG").LoadingOverlay("hide");
+            if (response.d.Estado) {
+                cargarGestiones();
+
+                $("#txtIdGestion").val("0");
+                $("#txtDescripcionG").val("");
+                $("#cboEstadoG").val('1');
+                $("#cboEstadoG").prop("disabled", true);
+
+                swal("Mensaje", response.d.Mensaje, "success");
+
+            } else {
+                swal("Mensaje", response.d.Mensaje, "warning");
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            $("#loadReG").LoadingOverlay("hide");
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        }
+    });
+}
+
+$('#btnGuardarGestion').on('click', function () {
+
+    if ($("#txtDescripcionG").val().trim() == "") {
+        toastr.warning("", "Debe completar el campo Descripcion");
+        $("#txtDescripcionG").focus();
+        return;
+    }
+
+    if (parseInt($("#txtIdGestion").val()) === 0) {
+        registerDataGestion();
+    } else {
+        editarDataGestion();
     }
 })

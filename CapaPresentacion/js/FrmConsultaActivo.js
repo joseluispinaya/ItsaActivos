@@ -14,8 +14,10 @@ $(document).ready(function () {
         //    format: 'a4'
         //});
         cargarGestiones();
+        cargarGestionesDoss();
         cargarCarreras();
         cargarCarrerasDos();
+        cargarItemsa();
     } else {
         console.error("jsPDF no está cargado.");
     }
@@ -33,6 +35,55 @@ $(document).ready(function () {
 
 //})
 
+function cargarGestionesDoss() {
+    $("#cboGestionGene").html("");
+
+    $.ajax({
+        type: "POST",
+        url: "FrmActivo.aspx/ObtenerGestion",
+        data: {},
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                $.each(data.d.Data, function (i, row) {
+                    if (row.Activo === true) {
+                        $("<option>").attr({ "value": row.IdGestion }).text(row.Descripcion).appendTo("#cboGestionGene");
+                    }
+
+                })
+            }
+
+        }
+    });
+}
+
+function cargarItemsa() {
+    $("#cboItemGen").html("");
+
+    $.ajax({
+        type: "POST",
+        url: "FrmActivo.aspx/ObtenerItems",
+        data: {},
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                $.each(data.d.Data, function (i, row) {
+                    if (row.Activo === true) {
+                        $("<option>").attr({ "value": row.IdItem }).text(row.Descripcion).appendTo("#cboItemGen");
+                    }
+
+                })
+            }
+
+        }
+    });
+}
 function cargarGestionesN(selectId) {
     $("#" + selectId).html("");
 
@@ -414,18 +465,106 @@ $('#btnConsultarM').on('click', function () {
     //swal("Mensaje", "IdGes: " + cbge + " IdCarrera: " + idcare, "success");
 })
 
-$('#btnImprimiM').on('click', function () {
-    
+//$('#btnImprimiM').on('click', function () {
 
-    $('#ocultar').hide();
-    $('#menuR').hide();
-    $('#logomenbre').show();
-    window.print();
-    $('#ocultar').show();
-    $('#menuR').show();
-    $('#logomenbre').hide();
-    //const espacioArri = document.getElementById('ocultar');
-});
+
+//    $('#ocultar').hide();
+//    $('#menuR').hide();
+//    $('#logomenbre').show();
+//    window.print();
+//    $('#ocultar').show();
+//    $('#menuR').show();
+//    $('#logomenbre').hide();
+//});
+
+
+function cargarDatosReporteGesItem() {
+    var request = {
+        IdGestion: $("#cboGestionGene").val(),
+        IdItem: $("#cboItemGen").val()
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "FrmConsultaActivo.aspx/ObtenerActivosGestionyItem",
+        data: JSON.stringify(request),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                var asociaciones = data.d.Data;
+                var container = $('#message-2 .col-sm-12'); // Selecciona el contenedor donde se añadirá el contenido
+
+                // Crear el contenido HTML dinámicamente
+                var sectionHtml = ''; // Inicializa la variable que contendrá el HTML
+
+                asociaciones.forEach(function (asociacion) {
+                    sectionHtml += `
+                        <div class="header" style="padding-top: 10px;">
+                            <table style="width: 100%; margin-bottom: 10px;" border="0">
+                                <tr>
+                                    <td style="border-top:1px solid #000; border-left:1px solid #000;" align="left"><strong>FECHA EMISION:</strong></td>
+                                    <td style="border-top:1px solid #000; border-left:1px solid #000;" align="left"><strong>CARRERA:</strong></td>
+                                    <td style="border-top:1px solid #000; border-left:1px solid #000; border-right:1px solid #000;" align="left"><strong>FECHA REGISTRO:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="border-bottom:1px solid #000; border-left:1px solid #000;" align="center"><span>${new Date().toLocaleDateString()}</span></td>
+                                    <td style="border-bottom:1px solid #000; border-left:1px solid #000;" align="center"><span>${asociacion.Descripcion}</span></td>
+                                    <td style="border-bottom:1px solid #000; border-left:1px solid #000; border-right:1px solid #000;" align="center"><span>${asociacion.FechaRegistro}</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    `;
+
+                    if (asociacion.ListaActivos.length > 0) {
+                        sectionHtml += `
+                            <div class="sectionz">LISTA DE ACTIVOS POR CARRERA</div>
+                            <div class="table-responsive">
+                                <table class="table" style="margin-bottom: 30px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left;">Codigo</th>
+                                            <th style="text-align: left;">Cantidad</th>
+                                            <th style="text-align: left;">Descripcion</th>
+                                            <th style="text-align: left;">Valor</th>
+                                            <th style="text-align: left;">Estado Fisico</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${asociacion.ListaActivos.map(pcd => `
+                                            <tr>
+                                                <td>${pcd.Codigo}</td>
+                                                <td>${pcd.Cantidad}</td>
+                                                <td>${pcd.Descripcion}</td>
+                                                <td>${pcd.ValorActivo}</td>
+                                                <td>${pcd.EstadoFisico.Descripcion}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    } else {
+                        sectionHtml += `
+                            <div class="sectionz">LA CARRERA NO TIENE ACTIVOS</div>
+                        `;
+                    }
+                });
+
+                // Reemplazar el contenido del contenedor con el nuevo HTML generado
+                container.html(sectionHtml);
+            }
+        }
+    });
+}
+
+$('#btnBuscarGe').on('click', function () {
+    cargarDatosReporteGesItem();
+    //swal("Mensaje", "IdGes: " + cbge + " IdCarrera: " + idcare, "success");
+})
 
 //generar pdf de la primera pestaña
 
@@ -448,36 +587,82 @@ function getBase64Image(imgUrl, callback) {
 }
 
 // Función para generar el PDF en orientación horizontal
-function generarPDFHorizontalOri() {
+
+function generarPDFHorizontal() {
     if (jsPDFInstance) {
         var imgUrl = "../Imagenes/membrete.png"; // Ruta de tu imagen
+        var nomCarrera = $("#txtNombreCarrera").val();
+        var gestionText = $('#cboGestionR option:selected').text();
+        var tituloR = "REPORTE DE: " + nomCarrera + " GESTIÓN: " + gestionText;
         getBase64Image(imgUrl, function (base64Img) {
-            const doc = new jsPDFInstance({
-                orientation: 'landscape',
-                unit: 'pt', // Cambiado de 'mm' a 'pt'
-                format: 'legal'
+            // Llama a cargarDatosReporteIA para obtener los datos
+            cargarDatosReporteIA(function (asociaciones) {
+                const doc = new jsPDFInstance({
+                    orientation: 'landscape',
+                    unit: 'pt',
+                    format: 'legal'
+                });
+
+                // Agrega la imagen de membrete
+                doc.addImage(base64Img, 'PNG', 220, 28, 567, 57);
+
+                // Agrega el título dinámico
+                doc.setFontSize(14);  // Ajusta el tamaño del título
+                doc.setFont("helvetica", "bold");  // Cambia la fuente y estilo si deseas
+                doc.text(tituloR, doc.internal.pageSize.getWidth() / 2, 110, { align: "center" });
+
+                //doc.text("Este es un PDF generado en orientación horizontal", 28, 113);
+                // Posición Y inicial para las asociaciones, ajustada después del título
+                //let currentY = 130;
+                let currentY = 150; // Posición Y inicial
+
+                // Itera sobre las asociaciones y agrégalas al PDF
+                asociaciones.forEach(function (asociacion, index) {
+                    const marginTop = 10;
+
+                    // Agrega el texto de la asociación
+                    doc.setFontSize(12);
+                    doc.text(`Descripcion: ${asociacion.Descripcion}`, 40, currentY + marginTop);
+                    doc.text(`Registrado: ${asociacion.FechaRegistro}`, 600, currentY + marginTop);
+
+                    // Verifica si hay activos en la asociación
+                    if (asociacion.ListaActivos.length > 0) {
+                        doc.text('LISTA DE ACTIVOS POR ITEM:', 40, currentY + 30);
+
+                        // Agrega la tabla con autoTable
+                        doc.autoTable({
+                            startY: currentY + 50,
+                            head: [['Codigo', 'Cantidad', 'Descripcion', 'Valor', 'Responsable', 'Ubicacion', 'Estado Fisico', 'Total']],
+                            body: asociacion.ListaActivos.map(pcd => [
+                                pcd.Codigo,
+                                pcd.Cantidad,
+                                pcd.Descripcion,
+                                pcd.ValorActivo,
+                                pcd.Responsable,
+                                pcd.Ubicacion,
+                                pcd.EstadoFisico.Descripcion,
+                                pcd.Total
+                            ]),
+                        });
+
+                        // Actualiza la posición Y para la siguiente asociación
+                        currentY = doc.autoTable.previous.finalY + 30; // Deja un margen después de la tabla
+                    } else {
+                        doc.text('EL ITEM NO TIENE ACTIVOS.', 40, currentY + 30);
+                        currentY += 50; // Ajusta el espaciado si no hay tabla
+                    }
+                });
+
+                // Guarda el PDF con los datos y la imagen
+                doc.save("documento_horizontal_con_imagen_y_datos.pdf");
             });
-
-            // Agregar la imagen al PDF (posiciones: x=10, y=10, ancho=50, alto=20)
-            //doc.addImage(base64Img, 'PNG', 80, 10, 200, 20);
-
-            // Agregar la imagen al PDF (posiciones: x=80, y=28, ancho=567, alto=57)
-            doc.addImage(base64Img, 'PNG', 220, 28, 567, 57);
-
-            // Agregar texto debajo de la imagen
-            doc.text("Este es un PDF generado en orientación horizontal", 28, 113);
-            //doc.text("Este es un PDF generado en orientación horizontal", 10, 40);
-
-            // Guardar el PDF
-            doc.save("documento_horizontal_con_imagen.pdf");
         });
-        
     } else {
         console.error("jsPDF no está disponible en generarPDFHorizontal.");
     }
 }
 
-function generarPDFHorizontal() {
+function generarPDFHorizontalOri() {
     if (jsPDFInstance) {
         var imgUrl = "../Imagenes/membrete.png"; // Ruta de tu imagen
         getBase64Image(imgUrl, function (base64Img) {
@@ -566,3 +751,214 @@ $('#btnImprimiUn').on('click', function () {
 
     generarPDFHorizontal();  // Llama a la función cuando se haga clic en el botón
 });
+
+//generar pdf de la segunda pestaña
+
+function generarPDFCarrer() {
+    if (jsPDFInstance) {
+        var imgUrl = "../Imagenes/membrete.png"; // Ruta de tu imagen
+        var nomCarrera = $("#txtNombreCarreraNu").val();
+        var tituloR = "REPORTE ACTIVOS DE: " + nomCarrera;
+        getBase64Image(imgUrl, function (base64Img) {
+            // Llama a cargarDatosReporteIA para obtener los datos
+            datosPdfCarrera(function (asociaciones) {
+                const doc = new jsPDFInstance({
+                    orientation: 'landscape',
+                    unit: 'pt',
+                    format: 'legal'
+                });
+
+                // Agrega la imagen de membrete
+                doc.addImage(base64Img, 'PNG', 220, 28, 567, 57);
+
+                // Agrega el título dinámico
+                doc.setFontSize(14);  // Ajusta el tamaño del título
+                doc.setFont("helvetica", "bold");  // Cambia la fuente y estilo si deseas
+                doc.text(tituloR, doc.internal.pageSize.getWidth() / 2, 110, { align: "center" });
+
+                //doc.text("Este es un PDF generado en orientación horizontal", 28, 113);
+                // Posición Y inicial para las asociaciones, ajustada después del título
+                //let currentY = 130;
+                let currentY = 150; // Posición Y inicial
+
+                // Itera sobre las asociaciones y agrégalas al PDF
+                asociaciones.forEach(function (asociacion, index) {
+                    var canti = asociacion.ListaActivos.length;
+                    const marginTop = 10;
+
+                    // Agrega el texto de la asociación
+                    doc.setFontSize(12);
+                    doc.text(`Activos de la Gestion: ${asociacion.Descripcion}`, 40, currentY + marginTop);
+                    doc.text(`Total: ${canti} Registros`, 600, currentY + marginTop);
+
+                    // Verifica si hay activos en la asociación
+                    if (asociacion.ListaActivos.length > 0) {
+                        doc.text('LISTA DE ACTIVOS POR GESTION:', 40, currentY + 30);
+
+                        // Agrega la tabla con autoTable
+                        doc.autoTable({
+                            startY: currentY + 50,
+                            head: [['Codigo', 'Item', 'Cantidad', 'Descripcion', 'Valor', 'Responsable', 'Ubicacion', 'Estado Fisico', 'Total']],
+                            body: asociacion.ListaActivos.map(pcd => [
+                                pcd.Codigo,
+                                pcd.Item.Descripcion,
+                                pcd.Cantidad,
+                                pcd.Descripcion,
+                                pcd.ValorActivo,
+                                pcd.Responsable,
+                                pcd.Ubicacion,
+                                pcd.EstadoFisico.Descripcion,
+                                pcd.Total
+                            ]),
+                        });
+
+                        // Actualiza la posición Y para la siguiente asociación
+                        currentY = doc.autoTable.previous.finalY + 30; // Deja un margen después de la tabla
+                    } else {
+                        doc.text('LA GESTION NO TIENE ACTIVOS.', 40, currentY + 30);
+                        currentY += 50; // Ajusta el espaciado si no hay tabla
+                    }
+                });
+
+                // Guarda el PDF con los datos y la imagen
+                doc.save("documento_por_carrera.pdf");
+            });
+        });
+    } else {
+        console.error("jsPDF no está disponible en generarPDFHorizontal.");
+    }
+}
+
+function datosPdfCarrera(callback) {
+    var request = {
+        IdCarrera: $("#txtIdCarreraNu").val()
+    };
+    $.ajax({
+        type: "POST",
+        url: "FrmConsultaActivo.aspx/ObtenerActivosPorCarrera",
+        data: JSON.stringify(request),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                var asociaciones = data.d.Data;
+                callback(asociaciones);  // Llama al callback pasando las asociaciones
+            }
+        }
+    });
+}
+
+$('#btnImprimiM').on('click', function () {
+
+    if (parseInt($("#txtIdCarreraNu").val()) === 0) {
+        swal("Mensaje", "Error debe seleccionar una Carrera", "warning");
+        return;
+    }
+
+    generarPDFCarrer();  // Llama a la función cuando se haga clic en el botón
+});
+
+//report pestaña tres
+function generarPDFgesItem() {
+    if (jsPDFInstance) {
+        var imgUrl = "../Imagenes/membrete.png"; // Ruta de tu imagen
+        var nomCarrera = $('#cboItemGen option:selected').text();
+        var gestionText = $('#cboGestionGene option:selected').text();
+        var tituloR = "REPORTE DE: " + nomCarrera + " GESTIÓN: " + gestionText;
+        getBase64Image(imgUrl, function (base64Img) {
+            // Llama a cargarDatosReporteIA para obtener los datos
+            cargarDatosRepGestionItem(function (asociaciones) {
+                const doc = new jsPDFInstance({
+                    orientation: 'landscape',
+                    unit: 'pt',
+                    format: 'legal'
+                });
+
+                // Agrega la imagen de membrete
+                doc.addImage(base64Img, 'PNG', 220, 28, 567, 57);
+
+                // Agrega el título dinámico
+                doc.setFontSize(14);  // Ajusta el tamaño del título
+                doc.setFont("helvetica", "bold");  // Cambia la fuente y estilo si deseas
+                doc.text(tituloR, doc.internal.pageSize.getWidth() / 2, 110, { align: "center" });
+
+                //doc.text("Este es un PDF generado en orientación horizontal", 28, 113);
+                // Posición Y inicial para las asociaciones, ajustada después del título
+                //let currentY = 130;
+                let currentY = 150; // Posición Y inicial
+
+                // Itera sobre las asociaciones y agrégalas al PDF
+                asociaciones.forEach(function (asociacion, index) {
+                    const marginTop = 10;
+
+                    // Agrega el texto de la asociación
+                    doc.setFontSize(12);
+                    doc.text(`Descripcion: ${asociacion.Descripcion}`, 40, currentY + marginTop);
+                    doc.text(`Registrado: ${asociacion.FechaRegistro}`, 600, currentY + marginTop);
+
+                    // Verifica si hay activos en la asociación
+                    if (asociacion.ListaActivos.length > 0) {
+                        doc.text('LISTA DE ACTIVOS POR CARRERA:', 40, currentY + 30);
+
+                        // Agrega la tabla con autoTable
+                        doc.autoTable({
+                            startY: currentY + 50,
+                            head: [['Codigo', 'Cantidad', 'Descripcion', 'Valor', 'Responsable', 'Ubicacion', 'Estado Fisico', 'Total']],
+                            body: asociacion.ListaActivos.map(pcd => [
+                                pcd.Codigo,
+                                pcd.Cantidad,
+                                pcd.Descripcion,
+                                pcd.ValorActivo,
+                                pcd.Responsable,
+                                pcd.Ubicacion,
+                                pcd.EstadoFisico.Descripcion,
+                                pcd.Total
+                            ]),
+                        });
+
+                        // Actualiza la posición Y para la siguiente asociación
+                        currentY = doc.autoTable.previous.finalY + 30; // Deja un margen después de la tabla
+                    } else {
+                        doc.text('LA CARRERA NO TIENE ACTIVOS.', 40, currentY + 30);
+                        currentY += 50; // Ajusta el espaciado si no hay tabla
+                    }
+                });
+
+                // Guarda el PDF con los datos y la imagen
+                doc.save("datos_item_gestion.pdf");
+            });
+        });
+    } else {
+        console.error("jsPDF no está disponible en generarPDFHorizontal.");
+    }
+}
+
+function cargarDatosRepGestionItem(callback) {
+    var request = {
+        IdGestion: $("#cboGestionGene").val(),
+        IdItem: $("#cboItemGen").val()
+    };
+    $.ajax({
+        type: "POST",
+        url: "FrmConsultaActivo.aspx/ObtenerActivosGestionyItem",
+        data: JSON.stringify(request),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        success: function (data) {
+            if (data.d.Estado) {
+                var asociaciones = data.d.Data;
+                callback(asociaciones);  // Llama al callback pasando las asociaciones
+            }
+        }
+    });
+}
+$('#btnImprimiGe').on('click', function () {
+    generarPDFgesItem();
+    //swal("Mensaje", "IdGes: " + cbge + " IdCarrera: " + idcare, "success");
+})

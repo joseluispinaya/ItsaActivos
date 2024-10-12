@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CapaEntidad
 {
@@ -9,5 +10,7 @@ namespace CapaEntidad
         public bool Activo { get; set; }
         public string FechaRegistro { get; set; }
         public DateTime VFechaRegistro { get; set; }
+
+        public List<EActivo> ListaActivos { get; set; }
     }
 }
