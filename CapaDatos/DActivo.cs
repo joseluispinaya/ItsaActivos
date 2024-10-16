@@ -24,6 +24,102 @@ namespace CapaDatos
         }
         #endregion
 
+        public Respuesta<int> RegistrarActivoNuev(EActivo activo)
+        {
+            try
+            {
+                int resultado = 0;  // Aquí almacenaremos el IdActivo devuelto
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand cmd = new SqlCommand("usp_RegistrarActivoCodb", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Agregar los parámetros de entrada
+                        cmd.Parameters.AddWithValue("@IdGestion", activo.IdGestion);
+                        cmd.Parameters.AddWithValue("@IdCarrera", activo.IdCarrera);
+                        cmd.Parameters.AddWithValue("@IdEstado", activo.IdEstado);
+                        cmd.Parameters.AddWithValue("@IdItem", activo.IdItem);
+                        cmd.Parameters.AddWithValue("@Cantidad", activo.Cantidad);
+                        cmd.Parameters.AddWithValue("@Descripcion", activo.Descripcion);
+                        cmd.Parameters.AddWithValue("@Caracteristicas", activo.Caracteristicas);
+                        cmd.Parameters.AddWithValue("@ValorActivo", activo.ValorActivo);
+                        cmd.Parameters.AddWithValue("@Responsable", activo.Responsable);
+                        cmd.Parameters.AddWithValue("@Ubicacion", activo.Ubicacion);
+                        cmd.Parameters.AddWithValue("@Observacion", activo.Observacion);
+                        cmd.Parameters.AddWithValue("@Total", activo.Total);
+                        cmd.Parameters.AddWithValue("@CodBarra", activo.CodBarra);
+
+                        // Parámetro de salida para obtener el IdActivo (resultado)
+                        SqlParameter outputParam = new SqlParameter("@Resultado", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(outputParam);
+
+                        // Abrir conexión y ejecutar el comando
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        // Obtener el valor del parámetro de salida (IdActivo)
+                        resultado = Convert.ToInt32(outputParam.Value);
+                    }
+                }
+
+                // Verificar si el resultado es válido
+                return new Respuesta<int>
+                {
+                    Estado = resultado > 0,  // Si es mayor a 0, se registró correctamente
+                    Valor = resultado.ToString(),       // Retornamos el IdActivo generado
+                    Mensaje = resultado > 0 ? "Registro realizado correctamente." : "Error al registrar, intente más tarde."
+                };
+            }
+            catch (Exception ex)
+            {
+                // En caso de error, devolver estado de fallo y el mensaje del error
+                return new Respuesta<int>
+                {
+                    Estado = false,
+                    Mensaje = "Ocurrió un error en BD: " + ex.Message
+                };
+            }
+        }
+
+        public bool ActualizarCod(int IdActi, string codbarr)
+        {
+            bool respuesta = false;
+
+            try
+            {
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand cmd = new SqlCommand("usp_ActualizaCodBarra", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@IdActivo", IdActi);
+                        cmd.Parameters.AddWithValue("@CodBarra", codbarr);
+
+                        SqlParameter outputParam = new SqlParameter("@Resultado", SqlDbType.Bit)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(outputParam);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        respuesta = Convert.ToBoolean(outputParam.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al Actualizar Token. Intente más tarde.", ex);
+            }
+
+            return respuesta;
+        }
+
         public Respuesta<bool> RegistrarActivo(EActivo activo)
         {
             try
@@ -108,6 +204,7 @@ namespace CapaDatos
                                     Observacion = dr["Observacion"].ToString(),
                                     Total = float.Parse(dr["Total"].ToString()),
                                     Activo = Convert.ToBoolean(dr["Activo"]),
+                                    CodBarra = dr["CodBarra"].ToString(),
                                     Gestion = new EGestion()
                                     {
                                         Descripcion = dr["DescripcionGestion"].ToString()

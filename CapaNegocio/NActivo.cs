@@ -23,6 +23,14 @@ namespace CapaNegocio
         }
         #endregion
 
+        public Respuesta<int> RegistrarActivoNuev(EActivo activo)
+        {
+            return DActivo.GetInstance().RegistrarActivoNuev(activo);
+        }
+        public bool ActualizarCod(int IdActi, string codbarr)
+        {
+            return DActivo.GetInstance().ActualizarCod(IdActi, codbarr);
+        }
         public Respuesta<bool> RegistrarActivo(EActivo activo)
         {
             return DActivo.GetInstance().RegistrarActivo(activo);

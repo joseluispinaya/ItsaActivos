@@ -26,6 +26,8 @@ namespace CapaEntidad
         public bool Activo { get; set; }
         public string FechaRegistro { get; set; }
         public DateTime VFechaRegistro { get; set; }
+
+        public string CodBarra { get; set; }
         public EGestion Gestion { get; set; }
         public ECarrera Carrera { get; set; }
         public EEstadoFisico EstadoFisico { get; set; }

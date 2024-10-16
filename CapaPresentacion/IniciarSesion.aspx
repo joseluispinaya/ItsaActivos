@@ -30,7 +30,7 @@
             <label for="chk" aria-hidden="true">Recuperar</label>
             <input class="input" type="text" name="txtnroci" placeholder="Correo para Restablecer" disabled="disabled" />
             <input class="input" type="email" name="email" id="cooree" placeholder="Ingrese su Correo" />
-            <%--<h3 class="labeljo">Revice su Correo Electronico</h3>--%>
+            <%--<h3 class="labeljo">Revice su Correo Electronico value="otzleo19@gmail.com" value="7d4dd2"</h3>--%>
             <button type="button" class="boton" id="btnRecupe">Recuperar</button>
         </div>
     </div>

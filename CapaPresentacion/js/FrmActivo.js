@@ -362,7 +362,7 @@ function dataRegistrar() {
 
     $.ajax({
         type: "POST",
-        url: "FrmActivo.aspx/Guardar",
+        url: "FrmActivo.aspx/GuardarNuevo",
         data: JSON.stringify(request),
         contentType: "application/json; charset=utf-8",
         dataType: "json",

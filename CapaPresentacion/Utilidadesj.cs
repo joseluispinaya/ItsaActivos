@@ -9,6 +9,7 @@ using System.Text;
 using System.Web;
 using CapaEntidad;
 using CapaNegocio;
+using MessagingToolkit.QRCode.Codec;
 
 namespace CapaPresentacion
 {
@@ -51,6 +52,97 @@ namespace CapaPresentacion
                 }
             }
             return sb.ToString();
+        }
+
+        public string GenerarQrActivoIa(string contenido)
+        {
+            string rutaFinal = "";
+
+            try
+            {
+                // Crear el QR a partir del contenido
+                QRCodeEncoder encoder = new QRCodeEncoder
+                {
+                    QRCodeScale = 10
+                };
+
+                using (System.Drawing.Bitmap img = encoder.Encode(contenido))
+                {
+                    // Generar un nombre único para el archivo
+                    string fileName = $"{Guid.NewGuid()}.jpg";
+                    string folder = HttpContext.Current.Server.MapPath("/Imgqr/");
+                    string fullPath = Path.Combine(folder, fileName);
+
+                    // Crear la carpeta si no existe
+                    if (!Directory.Exists(folder))
+                    {
+                        Directory.CreateDirectory(folder);
+                    }
+
+                    // Guardar la imagen en un archivo
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        File.WriteAllBytes(fullPath, ms.ToArray());
+                    }
+                    // Verificar si el archivo fue guardado correctamente
+                    if (File.Exists(fullPath))
+                    {
+                        rutaFinal = $"/Imgqr/{fileName}";
+                    }
+
+                }
+            }
+            catch (IOException)
+            {
+                rutaFinal = "";
+            }
+            catch (Exception)
+            {
+                rutaFinal = "";
+            }
+
+            return rutaFinal;
+        }
+
+        public string GenerarQrActivo(string contenido)
+        {
+            string rutaa = "";
+
+            try
+            {
+                QRCodeEncoder encoder = new QRCodeEncoder();
+                System.Drawing.Bitmap img = encoder.Encode(contenido);
+                System.Drawing.Image QR = img;
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    QR.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    byte[] imagenBytes = ms.ToArray();
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+                    string folder = "/Imgqr/";
+                    var fullPath = $"/Imgqr/{file}";
+                    rutaa = fullPath;
+                    var path = Path.Combine(HttpContext.Current.Server.MapPath(folder), file);
+                    File.WriteAllBytes(path, imagenBytes);
+                }
+
+                // Verificar si el archivo fue guardado correctamente
+                //if (File.Exists(path))
+                //{
+                //    rutaa = fullPath;
+                //}
+            }
+            catch (IOException)
+            {
+                rutaa = "";  // Asegura que devuelva una cadena vacía en caso de error de E/S
+            }
+            catch (Exception)
+            {
+                rutaa = "";  // Asegura que devuelva una cadena vacía en caso de error
+            }
+            return rutaa;
         }
 
         public string UploadPhotoA(MemoryStream stream, string folder)
