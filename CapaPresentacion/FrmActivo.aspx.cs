@@ -221,6 +221,8 @@ namespace CapaPresentacion
 
                 // Generar el contenido del QR
                 string contenido = $"Codigo: {item.Codigo}\n" +
+                                   $"Gestion: {item.Gestion.Descripcion}\n" +
+                                   $"Estado: {item.EstadoFisico.Descripcion}\n" +
                                    $"Item: {item.Item.Descripcion}\n" +
                                    $"Carrera: {item.Carrera.Descripcion}\n" +
                                    $"Descripcion: {item.Descripcion}";
@@ -236,12 +238,18 @@ namespace CapaPresentacion
                         return new Respuesta<int>
                         {
                             Estado = true,
-                            Mensaje = "Registro exitoso, pero hubo un problema al actualizar el código QR."
+                            Mensaje = "Registro exitoso, pero hubo un problema al actualizar el código QR.",
+                            Valor = item.IdActivo.ToString()
                         };
                     }
                 }
 
-                return new Respuesta<int> { Estado = true, Mensaje = "Registro realizado correctamente." };
+                return new Respuesta<int> 
+                { 
+                    Estado = true, 
+                    Mensaje = "Registro realizado correctamente.",
+                    Valor = item.IdActivo.ToString()
+                };
             }
             catch (Exception ex)
             {
@@ -249,6 +257,7 @@ namespace CapaPresentacion
             }
         }
 
+        // sin usar por el momento
         [WebMethod]
         public static Respuesta<int> GuardarNuevoOri(EActivo oActivo)
         {
@@ -312,7 +321,7 @@ namespace CapaPresentacion
             }
         }
 
-
+        // sin usar por el momento
         [WebMethod]
         public static Respuesta<bool> Guardar(EActivo oActivo)
         {
@@ -336,6 +345,21 @@ namespace CapaPresentacion
             catch (Exception ex)
             {
                 return new Respuesta<bool> { Estado = false, Mensaje = "Ocurrió un error: " + ex.Message };
+            }
+        }
+
+        [WebMethod]
+        public static Respuesta<EActivo> DetalleActivo(int IdActivo)
+        {
+            try
+            {
+                Respuesta<EActivo> oActivo = NActivo.GetInstance().ConsultarActivo(IdActivo);
+                return oActivo;
+            }
+            catch (Exception ex)
+            {
+                // Manejo de excepciones
+                return new Respuesta<EActivo>() { Estado = false, Data = null, Mensaje = ex.Message };
             }
         }
     }

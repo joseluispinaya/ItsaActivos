@@ -224,5 +224,14 @@ namespace CapaNegocio
                 };
             }
         }
+
+        public Respuesta<EActivo> ConsultarActivo(int idActivo)
+        {
+            return DActivo.GetInstance().ConsultarActivo(idActivo);
+        }
+        public Respuesta<EActivo> ConsultarActivoCodigo(string codigo)
+        {
+            return DActivo.GetInstance().ConsultarActivoCodigo(codigo);
+        }
     }
 }

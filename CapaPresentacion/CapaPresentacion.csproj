@@ -386,7 +386,9 @@
     <Content Include="assets\toastr\toastr.min.css" />
     <Content Include="assets\toastr\toastr.min.js" />
     <Content Include="Default.aspx" />
+    <Content Include="DocActivo.aspx" />
     <Content Include="FrmActivo.aspx" />
+    <Content Include="FrmBuscarActivoRepo.aspx" />
     <Content Include="FrmConfiguracion.aspx" />
     <Content Include="FrmConsultaActivo.aspx" />
     <Content Include="FrmPanelActivo.aspx" />
@@ -415,7 +417,9 @@
     <Content Include="inicioP\src\image\inicio\loico.ico" />
     <Content Include="inicioP\src\js\app.js" />
     <Content Include="inicioP\src\js\jquery.min.js" />
+    <Content Include="js\DocActivo.js" />
     <Content Include="js\FrmActivo.js" />
+    <Content Include="js\FrmBuscarActivoRepo.js" />
     <Content Include="js\FrmConfiguracion.js" />
     <Content Include="js\FrmConsultaActivo.js" />
     <Content Include="js\FrmPanelActivo.js" />
@@ -432,12 +436,26 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="DocActivo.aspx.cs">
+      <DependentUpon>DocActivo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DocActivo.aspx.designer.cs">
+      <DependentUpon>DocActivo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="FrmActivo.aspx.cs">
       <DependentUpon>FrmActivo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="FrmActivo.aspx.designer.cs">
       <DependentUpon>FrmActivo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FrmBuscarActivoRepo.aspx.cs">
+      <DependentUpon>FrmBuscarActivoRepo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FrmBuscarActivoRepo.aspx.designer.cs">
+      <DependentUpon>FrmBuscarActivoRepo.aspx</DependentUpon>
     </Compile>
     <Compile Include="FrmConfiguracion.aspx.cs">
       <DependentUpon>FrmConfiguracion.aspx</DependentUpon>

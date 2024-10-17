@@ -77,10 +77,11 @@ function dtListaActivosId() {
             { "data": "ValorActivo" },
             { "data": "EstadoFisico.Descripcion" },
             {
-                "defaultContent": '<button class="btn btn-primary btn-editar btn-sm"><i class="fas fa-pencil-alt"></i></button>',
+                "defaultContent": '<button class="btn btn-primary btn-editar btn-sm mr-2"><i class="fas fa-pencil-alt"></i></button>' +
+                                  '<button class="btn btn-info btn-detalle btn-sm"><i class="fas fa-eye"></i></button>',
                 "orderable": false,
                 "searchable": false,
-                "width": "40px"
+                "width": "80px"
             }
         ],
         "order": [[0, "desc"]],
@@ -132,6 +133,30 @@ $("#tbActivos tbody").on("click", ".btn-editar", function (e) {
     $("#myLargeModalLabel").text("Editar Activo");
 
     $("#modalActivo").modal("show");
+})
+
+$("#tbActivos tbody").on("click", ".btn-detalle", function (e) {
+    e.preventDefault();
+    let filaSeleccionada;
+
+    if ($(this).closest("tr").hasClass("child")) {
+        filaSeleccionada = $(this).closest("tr").prev();
+    } else {
+        filaSeleccionada = $(this).closest("tr");
+    }
+
+    const modelo = table.row(filaSeleccionada).data();
+    var url = 'DocActivo.aspx?id=' + modelo.IdActivo;
+
+    $("#overlayc").LoadingOverlay("show");
+    var popup = window.open(url, '', 'height=600,width=800,scrollbars=0,location=1,toolbar=0');
+
+    var timer = setInterval(function () {
+        if (popup.closed) {
+            clearInterval(timer);
+            $("#overlayc").LoadingOverlay("hide");
+        }
+    }, 500);
 })
 
 function cargarGestiones() {
@@ -374,8 +399,20 @@ function dataRegistrar() {
             if (response.d.Estado) {
                 dtListaActivosId();
                 $('#modalActivo').modal('hide');
-                swal("Mensaje", response.d.Mensaje, "success");
-                //swal("Mensaje", "Registro Exitoso", "success");
+
+                var url = 'DocActivo.aspx?id=' + response.d.Valor;
+
+                $("#overlayc").LoadingOverlay("show");
+                var popup = window.open(url, '', 'height=600,width=800,scrollbars=0,location=1,toolbar=0');
+
+                var timer = setInterval(function () {
+                    if (popup.closed) {
+                        clearInterval(timer);
+                        $("#overlayc").LoadingOverlay("hide");
+                    }
+                }, 500);
+
+                //swal("Mensaje", response.d.Mensaje, "success");
             } else {
                 swal("Mensaje", response.d.Mensaje, "warning");
             }

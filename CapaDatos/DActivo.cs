@@ -555,5 +555,185 @@ namespace CapaDatos
                 };
             }
         }
+
+
+        public Respuesta<EActivo> ConsultarActivo(int idActivo)
+        {
+            try
+            {
+                EActivo obj = null;
+
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand comando = new SqlCommand("usp_ObtenerActivosIdConsulta", con))
+                    {
+                        comando.CommandType = CommandType.StoredProcedure;
+                        comando.Parameters.AddWithValue("@IdActivo", idActivo);
+
+                        con.Open();
+                        using (SqlDataReader dr = comando.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                obj = new EActivo
+                                {
+                                    IdActivo = Convert.ToInt32(dr["IdActivo"]),
+                                    Codigo = dr["Codigo"].ToString(),
+                                    ValorCodigo = Convert.ToInt32(dr["ValorCodigo"]),
+                                    IdGestion = Convert.ToInt32(dr["IdGestion"]),
+                                    IdCarrera = Convert.ToInt32(dr["IdCarrera"]),
+                                    IdEstado = Convert.ToInt32(dr["IdEstado"]),
+                                    IdItem = Convert.ToInt32(dr["IdItem"]),
+                                    Cantidad = Convert.ToInt32(dr["Cantidad"]),
+                                    Descripcion = dr["DescripcionActivo"].ToString(),
+
+                                    Caracteristicas = dr["Caracteristicas"].ToString(),
+                                    ValorActivo = float.Parse(dr["ValorActivo"].ToString()),
+                                    Responsable = dr["Responsable"].ToString(),
+                                    Ubicacion = dr["Ubicacion"].ToString(),
+                                    Observacion = dr["Observacion"].ToString(),
+                                    Total = float.Parse(dr["Total"].ToString()),
+                                    Activo = Convert.ToBoolean(dr["Activo"]),
+                                    CodBarra = dr["CodBarra"].ToString(),
+                                    Gestion = new EGestion()
+                                    {
+                                        Descripcion = dr["DescripcionGestion"].ToString()
+                                    },
+                                    Carrera = new ECarrera()
+                                    {
+                                        Descripcion = dr["DescripcionCarrera"].ToString()
+                                    },
+                                    EstadoFisico = new EEstadoFisico()
+                                    {
+                                        Descripcion = dr["DescripcionEstado"].ToString()
+                                    },
+                                    Item = new EItem()
+                                    {
+                                        Descripcion = dr["DescripcionItem"].ToString()
+                                    },
+                                };
+                            }
+                        }
+                    }
+                }
+
+                return new Respuesta<EActivo>
+                {
+                    Estado = obj != null,  // El operador ternario ya no es necesario aquí, `obj != null` es suficiente
+                    Data = obj,
+                    Mensaje = obj != null ? "Activo obtenido correctamente" : "Ocurrio un error al obtener el activo"
+                };
+            }
+            catch (SqlException ex)
+            {
+                // Manejo de excepciones relacionadas con la base de datos
+                return new Respuesta<EActivo>
+                {
+                    Estado = false,
+                    Mensaje = "Error en la base de datos: " + ex.Message,
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejo de excepciones generales
+                return new Respuesta<EActivo>
+                {
+                    Estado = false,
+                    Mensaje = "Ocurrió un error inesperado: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        public Respuesta<EActivo> ConsultarActivoCodigo(string codigo)
+        {
+            try
+            {
+                EActivo obj = null;
+
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand comando = new SqlCommand("usp_BuscarActivoPorCodigo", con))
+                    {
+                        comando.CommandType = CommandType.StoredProcedure;
+                        comando.Parameters.AddWithValue("@Codigo", codigo);
+
+                        con.Open();
+                        using (SqlDataReader dr = comando.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                obj = new EActivo
+                                {
+                                    IdActivo = Convert.ToInt32(dr["IdActivo"]),
+                                    Codigo = dr["Codigo"].ToString(),
+                                    ValorCodigo = Convert.ToInt32(dr["ValorCodigo"]),
+                                    IdGestion = Convert.ToInt32(dr["IdGestion"]),
+                                    IdCarrera = Convert.ToInt32(dr["IdCarrera"]),
+                                    IdEstado = Convert.ToInt32(dr["IdEstado"]),
+                                    IdItem = Convert.ToInt32(dr["IdItem"]),
+                                    Cantidad = Convert.ToInt32(dr["Cantidad"]),
+                                    Descripcion = dr["DescripcionActivo"].ToString(),
+
+                                    Caracteristicas = dr["Caracteristicas"].ToString(),
+                                    ValorActivo = float.Parse(dr["ValorActivo"].ToString()),
+                                    Responsable = dr["Responsable"].ToString(),
+                                    Ubicacion = dr["Ubicacion"].ToString(),
+                                    Observacion = dr["Observacion"].ToString(),
+                                    Total = float.Parse(dr["Total"].ToString()),
+                                    Activo = Convert.ToBoolean(dr["Activo"]),
+                                    CodBarra = dr["CodBarra"].ToString(),
+                                    Gestion = new EGestion()
+                                    {
+                                        Descripcion = dr["DescripcionGestion"].ToString()
+                                    },
+                                    Carrera = new ECarrera()
+                                    {
+                                        Descripcion = dr["DescripcionCarrera"].ToString()
+                                    },
+                                    EstadoFisico = new EEstadoFisico()
+                                    {
+                                        Descripcion = dr["DescripcionEstado"].ToString()
+                                    },
+                                    Item = new EItem()
+                                    {
+                                        Descripcion = dr["DescripcionItem"].ToString()
+                                    },
+                                };
+                            }
+                        }
+                    }
+                }
+
+                return new Respuesta<EActivo>
+                {
+                    Estado = obj != null,  // El operador ternario ya no es necesario aquí, `obj != null` es suficiente
+                    Data = obj,
+                    Mensaje = obj != null ? "Activo obtenido correctamente" : "Ocurrio un error al obtener el activo"
+                };
+            }
+            catch (SqlException ex)
+            {
+                // Manejo de excepciones relacionadas con la base de datos
+                return new Respuesta<EActivo>
+                {
+                    Estado = false,
+                    Mensaje = "Error en la base de datos: " + ex.Message,
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejo de excepciones generales
+                return new Respuesta<EActivo>
+                {
+                    Estado = false,
+                    Mensaje = "Ocurrió un error inesperado: " + ex.Message,
+                    Data = null
+                };
+            }
+        }
+
     }
 }
