@@ -15,6 +15,7 @@ const MODELO_BASE = {
     Ubicacion: "",
     Observacion: "",
     Total: 0.0,
+    Activo: true
 }
 
 function ObtenerFecha() {
@@ -30,11 +31,12 @@ function ObtenerFecha() {
 $(document).ready(function () {
 
     $("#btnNuevoReg").hide();
-    $("#txtFechaRegis").val(ObtenerFecha());
+    //$("#txtFechaRegis").val(ObtenerFecha());
     cargarGestiones();
     cargarItems();
     cargarCarreras();
     cargarEstadosFisi();
+    //$("#cboEstadoA").prop("disabled", true);
 
 })
 
@@ -71,6 +73,14 @@ function dtListaActivosId() {
         "columns": [
             { "data": "IdActivo", "visible": false, "searchable": false },
             { "data": "Gestion.Descripcion" },
+            {
+                "data": "Activo", render: function (data) {
+                    if (data == true)
+                        return '<span class="badge badge-primary">Activo</span>';
+                    else
+                        return '<span class="badge badge-danger">No Activo</span>';
+                }
+            },
             { "data": "Codigo" },
             { "data": "Cantidad" },
             { "data": "Descripcion" },
@@ -93,7 +103,7 @@ function dtListaActivosId() {
                 title: '',
                 filename: 'Informe Activos',
                 exportOptions: {
-                    columns: [1, 2, 3, 4, 5, 6] // Ajusta según las columnas que desees exportar
+                    columns: [1, 2, 3, 4, 5, 6, 7] // Ajusta según las columnas que desees exportar
                 }
             }
         ],
@@ -129,6 +139,9 @@ $("#tbActivos tbody").on("click", ".btn-editar", function (e) {
     $("#txtUbicacion").val(modelo.Ubicacion);
     $("#txtObservacion").val(modelo.Observacion);
     $("#txtTotal").val(modelo.Total);
+
+    $("#cboEstadoA").val(modelo.Activo ? 1 : 0); // Ya es booleano, no necesitas `== true`
+    $("#cboEstadoA").prop("disabled", false);
 
     $("#myLargeModalLabel").text("Editar Activo");
 
@@ -359,6 +372,9 @@ $('#btnNuevoReg').on('click', function () {
     //$("select#cboItem").prop('selectedIndex', 0);
     $("select#cboestadofi").prop('selectedIndex', 0);
 
+    $("#cboEstadoA").val('1');
+    $("#cboEstadoA").prop("disabled", true);
+
     $("#myLargeModalLabel").text("Registrar Activo");
 
     $("#modalActivo").modal("show");
@@ -424,7 +440,73 @@ function dataRegistrar() {
         complete: function () {
             // Rehabilitar el botón después de que la llamada AJAX se complete (éxito o error)
             $('#btnGuardarCambiosA').prop('disabled', false);
-            $("#btnNuevoReg").hide();
+            //$("#btnNuevoReg").hide();
+        }
+    });
+}
+
+function dataActualizarA() {
+    const modelo = structuredClone(MODELO_BASE);
+    modelo["IdActivo"] = parseInt($("#txtIdActivo").val());
+    modelo["IdGestion"] = $("#cboGestion").val();
+    modelo["IdCarrera"] = $("#txtIdCarrera").val();
+    modelo["IdEstado"] = $("#cboestadofi").val();
+    modelo["IdItem"] = $("#cboItem").val();
+
+    modelo["Cantidad"] = $("#txtcantidad").val();
+    modelo["Descripcion"] = $("#txtDescripcion").val();
+    modelo["Caracteristicas"] = $("#txtCaracteristicas").val();
+    modelo["ValorActivo"] = parseFloat($("#txtvalorAct").val());
+    modelo["Responsable"] = $("#txtResponsable").val();
+    modelo["Ubicacion"] = $("#txtUbicacion").val();
+    modelo["Observacion"] = $("#txtObservacion").val();
+    modelo["Total"] = parseFloat($("#txtTotal").val());
+    modelo["Activo"] = ($("#cboEstadoA").val() == "1" ? true : false);
+
+    var request = {
+        oActivo: modelo
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "FrmActivo.aspx/ActualizarActivo",
+        data: JSON.stringify(request),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        beforeSend: function () {
+            $(".modal-content").LoadingOverlay("show");
+        },
+        success: function (response) {
+            $(".modal-content").LoadingOverlay("hide");
+            if (response.d.Estado) {
+                dtListaActivosId();
+                $('#modalActivo').modal('hide');
+
+                var url = 'DocActivo.aspx?id=' + response.d.Valor;
+
+                $("#overlayc").LoadingOverlay("show");
+                var popup = window.open(url, '', 'height=600,width=800,scrollbars=0,location=1,toolbar=0');
+
+                var timer = setInterval(function () {
+                    if (popup.closed) {
+                        clearInterval(timer);
+                        $("#overlayc").LoadingOverlay("hide");
+                    }
+                }, 500);
+
+                //swal("Mensaje", response.d.Mensaje, "success");
+            } else {
+                swal("Mensaje", response.d.Mensaje, "warning");
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            $(".modal-content").LoadingOverlay("hide");
+            console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+        },
+        complete: function () {
+            // Rehabilitar el botón después de que la llamada AJAX se complete (éxito o error)
+            $('#btnGuardarCambiosA').prop('disabled', false);
+            //$("#btnNuevoReg").hide();
         }
     });
 }
@@ -467,9 +549,9 @@ $('#btnGuardarCambiosA').on('click', function () {
     if (parseInt($("#txtIdActivo").val()) === 0) {
         dataRegistrar();
     } else {
-        //dataActualizar();
-        swal("Mensaje", "Falta Implementar", "warning");
+        dataActualizarA();
+        //swal("Mensaje", "Falta Implementar", "warning");
         // Rehabilitar el botón si hay campos vacíos
-        $('#btnGuardarCambiosA').prop('disabled', false);
+        //$('#btnGuardarCambiosA').prop('disabled', false);
     }
 })

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.IO;
 using CapaEntidad;
 using CapaNegocio;
 
@@ -38,58 +39,58 @@ namespace CapaPresentacion
             }
         }
 
-        private static bool GeneraQrParaTodos()
-        {
-            bool respue = false;
-            try
-            {
-                // Obtener la lista de todos los activos
-                Respuesta<List<EActivo>> listaRespuesta = NActivo.GetInstance().ObtenerActivos();
-                var listaActivos = listaRespuesta.Data;
+        //private static bool GeneraQrParaTodos()
+        //{
+        //    bool respue = false;
+        //    try
+        //    {
+        //        // Obtener la lista de todos los activos
+        //        Respuesta<List<EActivo>> listaRespuesta = NActivo.GetInstance().ObtenerActivos();
+        //        var listaActivos = listaRespuesta.Data;
 
-                // Verificar que la lista no sea nula ni esté vacía
-                if (listaActivos != null && listaActivos.Count > 0)
-                {
-                    foreach (var item in listaActivos)
-                    {
-                        // Si el activo no tiene un imageUrl asignado, generamos el QR y actualizamos
-                        if (string.IsNullOrEmpty(item.CodBarra))
-                        {
-                            // Generar el contenido del QR
-                            string contenido = $"Codigo: {item.Codigo}\n" +
-                                               $"Gestion: {item.Gestion.Descripcion}\n" +
-                                               $"Estado: {item.EstadoFisico.Descripcion}\n" +
-                                               $"Item: {item.Item.Descripcion}\n" +
-                                               $"Carrera: {item.Carrera.Descripcion}\n" +
-                                               $"Descripcion: {item.Descripcion}";
+        //        // Verificar que la lista no sea nula ni esté vacía
+        //        if (listaActivos != null && listaActivos.Count > 0)
+        //        {
+        //            foreach (var item in listaActivos)
+        //            {
+        //                // Si el activo no tiene un imageUrl asignado, generamos el QR y actualizamos
+        //                if (string.IsNullOrEmpty(item.CodBarra))
+        //                {
+        //                    // Generar el contenido del QR
+        //                    string contenido = $"Codigo: {item.Codigo}\n" +
+        //                                       $"Gestion: {item.Gestion.Descripcion}\n" +
+        //                                       $"Estado: {item.EstadoFisico.Descripcion}\n" +
+        //                                       $"Item: {item.Item.Descripcion}\n" +
+        //                                       $"Carrera: {item.Carrera.Descripcion}\n" +
+        //                                       $"Descripcion: {item.Descripcion}";
 
-                            // Generar el QR y obtener la URL de la imagen generada
-                            string imageUrl = Utilidadesj.GetInstance().GenerarQrActivoIa(contenido);
+        //                    // Generar el QR y obtener la URL de la imagen generada
+        //                    string imageUrl = Utilidadesj.GetInstance().GenerarQrActivoIa(contenido);
 
-                            // Si el QR fue generado con éxito, actualizar el registro en la base de datos
-                            if (!string.IsNullOrEmpty(imageUrl))
-                            {
-                                respue = NActivo.GetInstance().ActualizarCod(item.IdActivo, imageUrl);
+        //                    // Si el QR fue generado con éxito, actualizar el registro en la base de datos
+        //                    if (!string.IsNullOrEmpty(imageUrl))
+        //                    {
+        //                        respue = NActivo.GetInstance().ActualizarCod(item.IdActivo, imageUrl);
 
-                                // Si la actualización falla, puedes manejar el error aquí
-                                if (!respue)
-                                {
-                                    // Manejar el error o loggear que la actualización falló para este activo
-                                    //Console.WriteLine($"Error al actualizar el QR para el activo con ID: {item.IdActivo}");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                respue = false;
-                // Loggear el error para análisis
-                //Console.WriteLine("Ocurrió un error: " + ex.Message);
-            }
-            return respue;
-        }
+        //                        // Si la actualización falla, puedes manejar el error aquí
+        //                        if (!respue)
+        //                        {
+        //                            // Manejar el error o loggear que la actualización falló para este activo
+        //                            //Console.WriteLine($"Error al actualizar el QR para el activo con ID: {item.IdActivo}");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        respue = false;
+        //        // Loggear el error para análisis
+        //        //Console.WriteLine("Ocurrió un error: " + ex.Message);
+        //    }
+        //    return respue;
+        //}
 
 
 
@@ -257,6 +258,117 @@ namespace CapaPresentacion
             }
         }
 
+
+        [WebMethod]
+        public static Respuesta<bool> ActualizarActivo(EActivo oActivo)
+        {
+            Respuesta<bool> respuesta = new Respuesta<bool>();
+            try
+            {
+                if (oActivo == null || oActivo.IdActivo <= 0)
+                {
+                    return new Respuesta<bool>() { Estado = false, Mensaje = "Datos del activo inválidos" };
+                }
+
+                var utilidades = Utilidadesj.GetInstance();
+                var nActivo = NActivo.GetInstance();
+
+                // Modificar el activo
+                var modificacionRespuesta = nActivo.ModificarActivo(oActivo);
+                if (!modificacionRespuesta.Estado)
+                {
+                    return new Respuesta<bool> { Estado = false, Mensaje = "Error al actualizar. Intente más tarde." };
+                }
+
+                // Consultar el activo actualizado
+                var consultaRespuesta = nActivo.ConsultarActivo(oActivo.IdActivo);
+                var item = consultaRespuesta.Data;
+                if (item == null)
+                {
+                    return new Respuesta<bool> { Estado = false, Mensaje = "No se encontró el activo recién actualizado." };
+                }
+
+                // Generar y actualizar el código QR si es necesario
+                string nuevoCodigoQr = GenerarYActualizarQR(utilidades, item);
+                if (!string.IsNullOrEmpty(nuevoCodigoQr))
+                {
+                    bool qrActualizado = nActivo.ActualizarCod(item.IdActivo, nuevoCodigoQr);
+                    if (!qrActualizado)
+                    {
+                        return new Respuesta<bool>
+                        {
+                            Estado = true,
+                            Mensaje = "Actualización exitosa, pero hubo un problema al actualizar el código QR.",
+                            Valor = item.IdActivo.ToString()
+                        };
+                    }
+                }
+
+                respuesta.Estado = true;
+                respuesta.Mensaje = "Actualizado correctamente.";
+                respuesta.Valor = item.IdActivo.ToString();
+            }
+            catch (Exception ex)
+            {
+                respuesta.Estado = false;
+                respuesta.Mensaje = "Ocurrió un error: " + ex.Message;
+            }
+
+            return respuesta;
+        }
+
+        // Método separado para generar y actualizar el código QR
+        private static string GenerarYActualizarQR(Utilidadesj utilidades, EActivo item)
+        {
+            string contenidoQR = $"Codigo: {item.Codigo}\n" +
+                                 $"Gestion: {item.Gestion.Descripcion}\n" +
+                                 $"Estado: {item.EstadoFisico.Descripcion}\n" +
+                                 $"Desc: {item.Item.Descripcion}\n" +
+                                 $"Descripcion: {item.Descripcion}\n" +
+                                 $"Carrera: {item.Carrera.Descripcion}\n" +
+                                 $"Ubicacion: {item.Ubicacion}";
+
+            string nuevoCodigoQr = utilidades.GenerarQrActivoIa(contenidoQR);
+
+            if (!string.IsNullOrEmpty(nuevoCodigoQr))
+            {
+                // Eliminar el QR anterior si existe
+                if (!string.IsNullOrEmpty(item.CodBarra))
+                {
+                    string rutaImagenAntigua = HttpContext.Current.Server.MapPath(item.CodBarra);
+                    if (File.Exists(rutaImagenAntigua))
+                    {
+                        try
+                        {
+                            File.Delete(rutaImagenAntigua);
+                        }
+                        catch (Exception)
+                        {
+                            // Loggear el error de eliminación del archivo (puede ser opcional)
+                            //Console.WriteLine("Error al eliminar el archivo anterior: " + ex.Message);
+                        }
+                    }
+                }
+            }
+
+            return nuevoCodigoQr;
+        }
+
+        [WebMethod]
+        public static Respuesta<EActivo> DetalleActivo(int IdActivo)
+        {
+            try
+            {
+                Respuesta<EActivo> oActivo = NActivo.GetInstance().ConsultarActivo(IdActivo);
+                return oActivo;
+            }
+            catch (Exception ex)
+            {
+                // Manejo de excepciones
+                return new Respuesta<EActivo>() { Estado = false, Data = null, Mensaje = ex.Message };
+            }
+        }
+
         // sin usar por el momento
         [WebMethod]
         public static Respuesta<int> GuardarNuevoOri(EActivo oActivo)
@@ -348,19 +460,6 @@ namespace CapaPresentacion
             }
         }
 
-        [WebMethod]
-        public static Respuesta<EActivo> DetalleActivo(int IdActivo)
-        {
-            try
-            {
-                Respuesta<EActivo> oActivo = NActivo.GetInstance().ConsultarActivo(IdActivo);
-                return oActivo;
-            }
-            catch (Exception ex)
-            {
-                // Manejo de excepciones
-                return new Respuesta<EActivo>() { Estado = false, Data = null, Mensaje = ex.Message };
-            }
-        }
+        
     }
 }

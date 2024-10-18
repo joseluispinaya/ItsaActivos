@@ -85,6 +85,57 @@ namespace CapaDatos
             }
         }
 
+        public Respuesta<bool> ModificarActivo(EActivo activo)
+        {
+            try
+            {
+                bool respuesta = false;
+                using (SqlConnection con = ConexionBD.GetInstance().ConexionDB())
+                {
+                    using (SqlCommand cmd = new SqlCommand("usp_ModificarActivo", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@IdActivo", activo.IdActivo);
+                        cmd.Parameters.AddWithValue("@IdGestion", activo.IdGestion);
+                        cmd.Parameters.AddWithValue("@IdCarrera", activo.IdCarrera);
+                        cmd.Parameters.AddWithValue("@IdEstado", activo.IdEstado);
+                        cmd.Parameters.AddWithValue("@IdItem", activo.IdItem);
+                        cmd.Parameters.AddWithValue("@Cantidad", activo.Cantidad);
+
+                        cmd.Parameters.AddWithValue("@Descripcion", activo.Descripcion);
+                        cmd.Parameters.AddWithValue("@Caracteristicas", activo.Caracteristicas);
+                        cmd.Parameters.AddWithValue("@ValorActivo", activo.ValorActivo);
+                        cmd.Parameters.AddWithValue("@Responsable", activo.Responsable);
+                        cmd.Parameters.AddWithValue("@Ubicacion", activo.Ubicacion);
+                        cmd.Parameters.AddWithValue("@Observacion", activo.Observacion);
+                        cmd.Parameters.AddWithValue("@Total", activo.Total);
+                        cmd.Parameters.AddWithValue("@Activo", activo.Activo);
+                        //cmd.Parameters.AddWithValue("@CodBarra", activo.CodBarra);
+
+                        SqlParameter outputParam = new SqlParameter("@Resultado", SqlDbType.Bit)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(outputParam);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        respuesta = Convert.ToBoolean(outputParam.Value);
+                    }
+                }
+                return new Respuesta<bool>
+                {
+                    Estado = respuesta,
+                    Mensaje = respuesta ? "Se Realizo la actualizacion Correctamente" : "Error al alctualizar intente mas tarde"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Respuesta<bool> { Estado = false, Mensaje = "Ocurrió un error BD: " + ex.Message };
+            }
+        }
+
         public bool ActualizarCod(int IdActi, string codbarr)
         {
             bool respuesta = false;

@@ -31,5 +31,39 @@ namespace CapaPresentacion
                 return new Respuesta<EActivo>() { Estado = false, Data = null, Mensaje = ex.Message };
             }
         }
+
+        [WebMethod]
+        public static Respuesta<bool> CambiarEstadoActivo(int IdActivo, bool Estado)
+        {
+            try
+            {
+                if (IdActivo <= 0)
+                {
+                    return new Respuesta<bool>() { Estado = false, Mensaje = "Datos del activo inválidos" };
+                }
+                Respuesta<EActivo> oActivo = NActivo.GetInstance().ConsultarActivo(IdActivo);
+                var item = oActivo.Data;
+                if (item == null)
+                {
+                    return new Respuesta<bool> { Estado = false, Mensaje = "No se encontró el activo." };
+                }
+                item.Activo = Estado;
+                Respuesta<bool> respuesta = NActivo.GetInstance().ModificarActivo(item);
+                if (!respuesta.Estado)
+                {
+                    return new Respuesta<bool> { Estado = false, Mensaje = "Error al dar de baja el activo. Intente más tarde." };
+                }
+                return new Respuesta<bool>
+                {
+                    Estado = true,
+                    Mensaje = "Accion realizada correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejo de excepciones
+                return new Respuesta<bool>() { Estado = false, Mensaje = ex.Message };
+            }
+        }
     }
 }

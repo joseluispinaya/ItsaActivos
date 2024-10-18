@@ -31,6 +31,11 @@ namespace CapaNegocio
         {
             return DActivo.GetInstance().ActualizarCod(IdActi, codbarr);
         }
+
+        public Respuesta<bool> ModificarActivo(EActivo activo)
+        {
+            return DActivo.GetInstance().ModificarActivo(activo);
+        }
         public Respuesta<bool> RegistrarActivo(EActivo activo)
         {
             return DActivo.GetInstance().RegistrarActivo(activo);

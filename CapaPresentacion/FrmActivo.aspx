@@ -68,11 +68,12 @@
                                     <tr>
                                         <th>Id</th>
                                         <th>Gestion</th>
+                                        <th>Estado</th>
                                         <th>Codigo</th>
-                                        <th>Cantidad</th>
+                                        <th>Cant</th>
                                         <th>Descripcion</th>
                                         <th>Valor</th>
-                                        <th>Estado Fisico</th>
+                                        <th>E. Fisico</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -133,8 +134,11 @@
                                     <input type="text" class="form-control input-sm model" id="txtDescripcion" name="Descripcion" />
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <label for="txtFechaRegis">Fecha Registro</label>
-                                    <input type="text" class="form-control input-sm" id="txtFechaRegis" disabled />
+                                    <label for="cboEstadoA">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboEstadoA">
+                                        <option value="1">Activo</option>
+                                        <option value="0">No Activo</option>
+                                    </select>
                                 </div>
                             </div>
 

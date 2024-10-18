@@ -1,5 +1,13 @@
 ﻿
 
+let opcion = false;
+
+$(document).ready(function () {
+
+    $("#btnImpr").hide();
+    $("#btnDesac").hide();
+
+})
 
 $('#btnbuscar').on('click', function () {
 
@@ -48,7 +56,19 @@ function buscarDatosActivo() {
                 $("#imgqr").attr("src", activo.CodBarra);
                 $("#txtcaracte").text(activo.Caracteristicas);
 
-                var estado = activo.Activo ? 'El Activo esta Habilitado' : 'El Activo esta Inhabilitado';  // Manejo del bool Estado
+                $("#btnDesac").show();
+                $("#btnImpr").show();
+
+                opcion = activo.Activo;
+
+                // Cambiar el texto del botón basado en el estado de 'opcion'
+                if (opcion) {
+                    $("#btnDesac").text("Suspender el Activo");
+                } else {
+                    $("#btnDesac").text("Reactivar el Activo");
+                }
+
+                var estado = activo.Activo ? 'El Activo esta Habilitado' : 'El Activo esta Suspendido';  // Manejo del bool Estado
 
                 var totalCosto = activo.Total;
                 var preccio = activo.ValorActivo;
@@ -62,12 +82,6 @@ function buscarDatosActivo() {
                 //$("#txtpre").text(activo.ValorActivo);
                 $("#txtpre").text(preccio.toFixed(2) + " /Bs.");
                 $("#txttotl").text(totalCosto.toFixed(2) + " /Bs.");
-                //$("#txttotl").text(activo.Total);
-
-                //var currentDate = new Date().toLocaleDateString();
-                //txttofo
-                //$("#txtfech").text(currentDate);
-                //$("#txttofo").text(totalCosto.toFixed(2) + " /Bs.");
 
 
             } else {
@@ -121,7 +135,32 @@ $('#btnDesac').on('click', function () {
 
         function (respuesta) {
             if (respuesta) {
-                swal("Mensaje", "El activo Fue dado de baja", "success");
+                $(".showSweetAlert").LoadingOverlay("show");
+                var request = {
+                    IdActivo: parseInt($("#txtIdActivo").val()),
+                    Estado: !opcion
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "FrmBuscarActivoRepo.aspx/CambiarEstadoActivo",
+                    data: JSON.stringify(request),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status + " \n" + xhr.responseText, "\n" + thrownError);
+                    },
+                    success: function (response) {
+                        $(".showSweetAlert").LoadingOverlay("hide");
+                        if (response.d.Estado) {
+                            buscarDatosActivo();
+                            swal("Mensaje", response.d.Mensaje, "success");
+                        } else {
+                            swal("Mensaje", response.d.Mensaje, "error");
+                        }
+
+                    }
+                });
+                //swal("Mensaje", "El activo Fue dado de baja", "success");
                 //registerDataAjaxP();
             }
 
